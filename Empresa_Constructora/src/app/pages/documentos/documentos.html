@@ -1,0 +1,116 @@
+<div class="documentos-page-container">
+
+  <h1>📁 Gestión de Documentos</h1>
+  <p class="subtitle">Administre planos, contratos, cotizaciones e informes de obra de forma centralizada</p>
+
+  <!-- FORMULARIO DE REGISTRO -->
+  <div class="form-card">
+    <div class="form-header">
+      <h2>Subir Nuevo Documento</h2>
+      <p>Cargue y clasifique archivos asociados a sus proyectos activos</p>
+    </div>
+
+    <div class="formulario">
+
+      <div class="form-group">
+        <label>Proyecto Destino</label>
+        <select [(ngModel)]="documento.id_proyecto">
+          <option value="">-- Seleccione un proyecto --</option>
+          <option *ngFor="let proyecto of proyectos" [value]="proyecto.id_proyecto">
+            {{ proyecto.nombre }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Nombre del Documento</label>
+        <input type="text" [(ngModel)]="documento.nombre" placeholder="Ej. Plano de Instalaciones Eléctricas">
+      </div>
+
+      <div class="form-group">
+        <label>Tipo de Documento</label>
+        <input type="text" [(ngModel)]="documento.tipo" placeholder="Ej. Plano, Contrato, Presupuesto, Informe...">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group half-width">
+          <label>Formato (Extensión)</label>
+          <input type="text" [(ngModel)]="documento.formato" placeholder="Ej. PDF, DXF, DWG, XLSX">
+        </div>
+        <div class="form-group half-width">
+          <label>Tamaño Estimado</label>
+          <input type="text" [(ngModel)]="documento.tamano" placeholder="Ej. 2.5 MB">
+        </div>
+      </div>
+
+      <div class="form-group file-group">
+        <label>Seleccionar Archivo Físico</label>
+        <div class="file-uploader">
+          <input type="file" (change)="seleccionarArchivo($event)">
+        </div>
+      </div>
+
+      <button (click)="registrarDocumento()" class="btn-submit">
+        📤 Registrar y Subir Documento
+      </button>
+
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- LISTA DE DOCUMENTOS -->
+  <div class="history-section">
+    <div class="history-header">
+      <h2>Documentos Registrados</h2>
+      <input class="buscador" type="text" [(ngModel)]="filtro" placeholder="🔍 Buscar documentos por nombre...">
+    </div>
+
+    <div class="documentos-grid">
+      <div class="document-card" *ngFor="let doc of documentosFiltrados">
+        
+        <div class="card-header-tags">
+          <span class="project-tag">{{ obtenerNombreProyecto(doc.id_proyecto) }}</span>
+          <span class="format-badge" [attr.data-format]="(doc.formato || '').toUpperCase()">
+            {{ doc.formato || 'DOC' }}
+          </span>
+        </div>
+
+        <h3 class="document-title">{{ doc.nombre }}</h3>
+
+        <div class="document-details">
+          <div class="detail-row">
+            <span class="label">Tipo:</span>
+            <span class="value">{{ doc.tipo || 'General' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Tamaño:</span>
+            <span class="value">{{ doc.tamano || 'N/A' }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="label">Fecha Subida:</span>
+            <span class="value">📅 {{ doc.fecha_subida || '-' }}</span>
+          </div>
+        </div>
+
+        <div class="acciones-panel">
+          <a [href]="'http://localhost:8000/' + doc.archivo_url" target="_blank" class="action-btn view-btn">
+            👁️ Ver
+          </a>
+          <a [href]="'http://localhost:8000/' + doc.archivo_url" download class="action-btn download-btn">
+            ⬇️ Descargar
+          </a>
+          <button (click)="eliminarDocumento(doc.id_documento)" class="action-btn delete-btn">
+            🗑️ Eliminar
+          </button>
+        </div>
+
+      </div>
+
+      <div class="no-documents" *ngIf="documentosFiltrados.length === 0">
+        📭 No se encontraron documentos registrados.
+      </div>
+    </div>
+  </div>
+
+</div>

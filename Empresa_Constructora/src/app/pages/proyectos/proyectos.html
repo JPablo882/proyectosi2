@@ -1,0 +1,282 @@
+<div class="proyectos-container">
+
+  <!-- FORMULARIO -->
+
+  <div class="card">
+
+    <h1>Registro de Proyectos</h1>
+
+    <div class="form-group">
+
+      <label>Nombre</label>
+
+      <input
+        type="text"
+        [(ngModel)]="proyecto.nombre"
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Ubicación</label>
+
+      <input
+        type="text"
+        [(ngModel)]="proyecto.ubicacion"
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Fecha Inicio</label>
+
+      <input
+        type="date"
+        [(ngModel)]="proyecto.fecha_inicio"
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Fecha Fin</label>
+
+      <input
+        type="date"
+        [(ngModel)]="proyecto.fecha_fin"
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>Estado</label>
+
+      <input
+        type="text"
+        [(ngModel)]="proyecto.estado"
+      >
+
+    </div>
+
+    <button
+      (click)="registrarProyecto()"
+    >
+      Registrar Proyecto
+    </button>
+
+  </div>
+
+  <!-- TABLA -->
+
+  <div class="tabla-proyectos">
+
+    <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; gap: 15px;">
+      <h2 style="align-self: flex-start; margin: 0;">Lista de Proyectos</h2>
+      
+      <div class="search-container" style="position: relative; width: 550px; max-width: 100%;">
+        <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 16px;">🔍</span>
+        <input 
+          type="text" 
+          [(ngModel)]="terminoBusqueda" 
+          placeholder="Buscar por ID, nombre, cliente, estado..."
+          style="width: 100%; padding: 12px 15px 12px 45px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 15px; outline: none; transition: all 0.2s; background: #f8fafc; box-sizing: border-box; box-shadow: 0 2px 5px rgba(0,0,0,0.05);"
+          onfocus="this.style.borderColor='#ff6b3d'; this.style.boxShadow='0 0 0 4px rgba(255, 107, 61, 0.15)';"
+          onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.05)';"
+        >
+      </div>
+    </div>
+
+    <div class="table-scroll-container">
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Cliente</th>
+            <th>Ubicación</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Dirección y Supervisión</th>
+            <th>Total Pagado</th>
+            <th>Saldo Pendiente</th>
+            <th>Estado Pago</th>
+            <th>Estado Proyecto</th>
+            <th>Acciones</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let p of proyectosFiltrados">
+
+            <td>{{ p.id_proyecto }}</td>
+            <td>{{ p.nombre }}</td>
+            <td>{{ p.cliente }}</td>
+            <td>{{ p.ubicacion }}</td>
+            <td>{{ p.fecha_inicio || '-' }}</td>
+            <td>{{ p.fecha_fin || '-' }}</td>
+            <td>
+              <div *ngIf="p.id_ingeniero || p.id_residente || p.id_maestro || (p.id_albaniles && p.id_albaniles.length > 0) || (p.id_ayudantes && p.id_ayudantes.length > 0); else noAsignado" style="font-size: 12px; text-align: left; line-height: 1.4;">
+                <div *ngIf="p.id_ingeniero" style="margin-bottom: 2px;">👷 <b>Ing/Arq:</b> {{ p.nom_ingeniero }}</div>
+                <div *ngIf="p.id_residente" style="margin-bottom: 2px;">📋 <b>Residente:</b> {{ p.nom_residente }}</div>
+                <div *ngIf="p.id_maestro" style="margin-bottom: 2px;">🛠️ <b>Maestro:</b> {{ p.nom_maestro }}</div>
+                <div *ngIf="p.id_albaniles && p.id_albaniles.length > 0" style="margin-bottom: 2px;">👷 <b>Albañiles:</b> {{ p.nom_albaniles }}</div>
+                <div *ngIf="p.id_ayudantes && p.id_ayudantes.length > 0" style="margin-bottom: 2px;">👷 <b>Ayudantes:</b> {{ p.nom_ayudantes }}</div>
+                <button *ngIf="p.estado_proyecto !== 'Finalizado'" (click)="abrirModalAsignar(p)" class="btn-asignar-edit">
+                  Editar
+                </button>
+              </div>
+              <ng-template #noAsignado>
+                <button *ngIf="p.estado_proyecto !== 'Finalizado'" (click)="abrirModalAsignar(p)" class="btn-asignar">
+                  ➕ Asignar Personal
+                </button>
+                <span *ngIf="p.estado_proyecto === 'Finalizado'" style="color: grey; font-style: italic; font-size: 12px;">Sin asignar</span>
+              </ng-template>
+            </td>
+            <td>{{ p.total_pagado | number:'1.2-2' }} Bs</td>
+            <td [style.color]="p.debe_dinero ? '#dc2626' : '#16a34a'" [style.font-weight]="'bold'">
+              {{ p.saldo_pendiente | number:'1.2-2' }} Bs
+            </td>
+            <td>
+              <span [style.background-color]="p.debe_dinero ? '#fef3c7' : '#dcfce7'"
+                    [style.color]="p.debe_dinero ? '#d97706' : '#16a34a'"
+                    [style.padding]="'4px 8px'"
+                    [style.border-radius]="'12px'"
+                    [style.font-size]="'12px'"
+                    [style.font-weight]="'bold'">
+                {{ p.estado_pago }}
+              </span>
+            </td>
+            <td>
+              <select [value]="p.estado_proyecto" 
+                      (change)="actualizarEstadoProyecto(p.id_proyecto, $event)"
+                      [style.padding]="'6px'"
+                      [style.border-radius]="'6px'"
+                      [style.border]="p.estado_proyecto === 'Pendiente' ? '2px solid #d97706' : '1px solid #ccc'"
+                      [style.background-color]="p.estado_proyecto === 'Pendiente' ? '#fffbeb' : '#fff'"
+                      [style.font-weight]="p.proyecto_finalizado || p.estado_proyecto === 'Pendiente' ? 'bold' : 'normal'"
+                      [style.color]="p.estado_proyecto === 'Pendiente' ? '#d97706' : (p.proyecto_finalizado ? '#16a34a' : '#000')">
+                <option value="Pendiente">Pendiente</option>
+                <option value="En planificación">En planificación</option>
+                <option value="En construcción">En construcción</option>
+                <option value="Finalizado">Finalizado</option>
+              </select>
+            </td>
+
+            <td class="acciones">
+
+              <button
+                class="eliminar"
+                (click)="eliminarProyecto(p.id_proyecto)"
+              >
+                🗑️
+              </button>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Modal de Asignación de Personal -->
+  <div class="modal-backdrop" *ngIf="mostrarModalAsignacion">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Asignar Personal de Dirección y Supervisión</h3>
+        <button class="close-btn" (click)="cerrarModalAsignacion()">✕</button>
+      </div>
+      <div class="modal-body">
+        <h4 style="margin-bottom: 16px; color: #4b5563;">Proyecto: {{ proyectoSeleccionado?.nombre }}</h4>
+        
+        <div class="form-group-modal">
+          <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #374151; font-size: 14px;">
+            Ingeniero Civil / Arquitecto <span style="color: #ef4444;">*</span>
+          </label>
+          <select [(ngModel)]="idIngenieroSel" class="modal-select" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; background-color: #fff; font-size: 14px;">
+            <option [value]="null">-- Seleccionar Ingeniero/Arquitecto --</option>
+            <option *ngFor="let emp of listaIngenierosActivos" [value]="emp.id_empleados">
+              {{ emp.nombre }} ({{ emp.cargo }})
+            </option>
+          </select>
+        </div>
+        
+        <div class="form-group-modal" style="margin-top: 16px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #374151; font-size: 14px;">
+            Residente de Obras <span style="color: #ef4444;">*</span>
+          </label>
+          <select [(ngModel)]="idResidenteSel" class="modal-select" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; background-color: #fff; font-size: 14px;">
+            <option [value]="null">-- Seleccionar Residente --</option>
+            <option *ngFor="let emp of listaResidentesActivos" [value]="emp.id_empleados">
+              {{ emp.nombre }} ({{ emp.cargo }})
+            </option>
+          </select>
+        </div>
+        
+        <div class="form-group-modal" style="margin-top: 16px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #374151; font-size: 14px;">
+            Maestro de Obra <span style="color: #ef4444;">*</span>
+          </label>
+          <select [(ngModel)]="idMaestroSel" class="modal-select" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #d1d5db; background-color: #fff; font-size: 14px;">
+            <option [value]="null">-- Seleccionar Maestro de Obra --</option>
+            <option *ngFor="let emp of listaMaestrosActivos" [value]="emp.id_empleados">
+              {{ emp.nombre }} ({{ emp.cargo }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Obreros de Construcción (Mano de Obra) -->
+        <h4 style="margin-top: 24px; margin-bottom: 12px; color: #0d2c6c; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; font-size: 15px; font-weight: bold;">
+          Obreros de Construcción (Mano de Obra)
+        </h4>
+
+        <div class="form-group-modal" style="margin-top: 12px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #374151; font-size: 14px;">
+            Seleccionar Albañiles
+          </label>
+          <div style="border: 1px solid #d1d5db; border-radius: 8px; max-height: 120px; overflow-y: auto; padding: 8px; background: #fff;">
+            <div *ngFor="let emp of listaAlbanilesActivos" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <input type="checkbox" [checked]="isAlbanilSeleccionado(emp.id_empleados)" (change)="toggleAlbanil(emp.id_empleados)" style="width: auto; cursor: pointer;">
+              <span style="font-size: 14px; color: #374151;">{{ emp.nombre }} ({{ emp.cargo }})</span>
+            </div>
+            <div *ngIf="listaAlbanilesActivos.length === 0" style="color: #9ca3af; font-size: 13px; font-style: italic;">No hay albañiles disponibles</div>
+          </div>
+        </div>
+
+        <div class="form-group-modal" style="margin-top: 16px;">
+          <label style="display: block; font-weight: bold; margin-bottom: 6px; color: #374151; font-size: 14px;">
+            Seleccionar Ayudantes
+          </label>
+          <div style="border: 1px solid #d1d5db; border-radius: 8px; max-height: 120px; overflow-y: auto; padding: 8px; background: #fff;">
+            <div *ngFor="let emp of listaAyudantesActivos" style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <input type="checkbox" [checked]="isAyudanteSeleccionado(emp.id_empleados)" (change)="toggleAyudante(emp.id_empleados)" style="width: auto; cursor: pointer;">
+              <span style="font-size: 14px; color: #374151;">{{ emp.nombre }} ({{ emp.cargo }})</span>
+            </div>
+            <div *ngIf="listaAyudantesActivos.length === 0" style="color: #9ca3af; font-size: 13px; font-style: italic;">No hay ayudantes disponibles</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; border-top: 1px solid #f3f4f6; padding-top: 16px;">
+        <button class="btn-cancel" (click)="cerrarModalAsignacion()" style="padding: 10px 18px; border-radius: 8px; border: 1px solid #d1d5db; background-color: #fff; color: #374151; font-weight: bold; cursor: pointer; font-size: 14px;">
+          Cancelar
+        </button>
+        <button class="btn-save" (click)="guardarAsignacion()" style="padding: 10px 18px; border-radius: 8px; border: none; background-color: #1e3a8a; color: #fff; font-weight: bold; cursor: pointer; font-size: 14px;">
+          Guardar Asignación
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

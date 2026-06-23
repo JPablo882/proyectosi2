@@ -1,0 +1,150 @@
+<div class="inventario-container">
+
+  <div class="header-container">
+    <h1>📦 Gestión de Inventario</h1>
+    <button class="btn-primary" (click)="abrirModal()">
+      🔧 Ocupar Material en Obra
+    </button>
+  </div>
+
+  <div class="cards">
+
+    <div class="card danger">
+      <h3>Stock Crítico</h3>
+      <p>{{ stockCritico }} materiales</p>
+    </div>
+
+    <div class="card warning">
+      <h3>Stock Bajo</h3>
+      <p>{{ stockBajo }} materiales</p>
+    </div>
+
+    <div class="card success">
+      <h3>Total Materiales</h3>
+      <p>{{ materiales.length }}</p>
+    </div>
+
+  </div>
+
+  <input
+    type="text"
+    [(ngModel)]="filtro"
+    (input)="filtrarMateriales()"
+    placeholder="Buscar materiales..."
+    class="buscador"
+  >
+
+  <div class="table-scroll-container">
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>ID</th>
+          <th>Material</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Estado</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let material of materialesFiltrados">
+
+          <td>{{ material.id_material }}</td>
+
+          <td>{{ material.nombre }}</td>
+
+          <td>Bs {{ material.precio }}</td>
+
+          <td>{{ material.stock }}</td>
+
+          <td>
+
+            <span
+              class="estado"
+              [ngClass]="{
+                'critico': obtenerEstado(material.stock) === 'Crítico',
+                'bajo': obtenerEstado(material.stock) === 'Bajo',
+                'normal': obtenerEstado(material.stock) === 'Normal'
+              }">
+
+              {{ obtenerEstado(material.stock) }}
+
+            </span>
+
+          </td>
+
+        </tr>
+
+        <tr *ngIf="materialesFiltrados.length === 0">
+          <td colspan="5" style="text-align:center;">
+            No se encontraron materiales
+          </td>
+        </tr>
+
+      </tbody>
+
+    </table>
+  </div>
+</div>
+
+<!-- MODAL: OCUPAR MATERIAL -->
+<div class="modal-backdrop" *ngIf="isModalOpen">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2>🔧 Ocupar Material en Obra</h2>
+      <button class="btn-close" (click)="cerrarModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <form (ngSubmit)="confirmarOcuparMaterial()">
+        <div class="form-group">
+          <label for="proyecto">Seleccionar Proyecto / Obra:</label>
+          <select id="proyecto" [(ngModel)]="proyectoSeleccionadoId" name="proyecto" required class="form-control">
+            <option value="" disabled selected>-- Selecciona un proyecto --</option>
+            <option *ngFor="let p of proyectos" [value]="p.id_proyecto">
+              {{ p.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="material">Seleccionar Material del Inventario:</label>
+          <select id="material" [(ngModel)]="materialSeleccionadoId" name="material" required class="form-control" (change)="actualizarStockDisponible()">
+            <option value="" disabled selected>-- Selecciona un material --</option>
+            <option *ngFor="let m of materiales" [value]="m.id_material">
+              {{ m.nombre }} (Stock: {{ m.stock }})
+            </option>
+          </select>
+          <small class="stock-info" *ngIf="stockDisponible !== null">
+            Stock disponible en almacén: <strong>{{ stockDisponible }}</strong> unidades
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="cantidad">Cantidad a ocupar:</label>
+          <input 
+            type="number" 
+            id="cantidad" 
+            [(ngModel)]="cantidadAOcupar" 
+            name="cantidad" 
+            min="1" 
+            [max]="stockDisponible || 999999"
+            required 
+            class="form-control"
+            placeholder="Ej. 10"
+          >
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" (click)="cerrarModal()">Cancelar</button>
+          <button type="submit" class="btn-submit" [disabled]="!proyectoSeleccionadoId || !materialSeleccionadoId || !cantidadAOcupar || cantidadAOcupar <= 0 || (stockDisponible !== null && cantidadAOcupar > stockDisponible)">
+            Confirmar Descuento
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

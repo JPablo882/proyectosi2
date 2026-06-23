@@ -1,0 +1,124 @@
+<div class="container">
+
+  <div class="card">
+
+    <h1>Registro de Empresa</h1>
+
+    <div class="steps">
+
+      <div
+        class="step"
+        [class.active]="paso >= 1"
+      >
+        ✔
+      </div>
+
+      <div class="line"></div>
+
+      <div
+        class="step"
+        [class.active]="paso >= 2"
+      >
+        2
+      </div>
+
+    </div>
+
+    <!-- PASO 1 -->
+
+    <div *ngIf="paso === 1">
+
+      <input
+        type="text"
+        placeholder="Nombre de la Empresa"
+        [(ngModel)]="empresa.nombre_empresa"
+      >
+
+      <input
+        type="email"
+        placeholder="Email de la Empresa"
+        [(ngModel)]="empresa.email_empresa"
+      >
+
+      <input
+        type="text"
+        placeholder="Teléfono"
+        [(ngModel)]="empresa.telefono"
+      >
+
+      <textarea
+        placeholder="Dirección"
+        [(ngModel)]="empresa.direccion"
+      ></textarea>
+
+      <div class="buttons">
+
+        <button
+          class="btn-cancel"
+          routerLink="/"
+        >
+          CANCELAR
+        </button>
+
+        <button
+          class="btn-next"
+          (click)="siguientePaso()"
+        >
+          SIGUIENTE
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- PASO 2 -->
+
+    <div *ngIf="paso === 2">
+
+      <input
+        type="text"
+        placeholder="Nombre del Administrador"
+        [(ngModel)]="empresa.nombre_admin"
+      >
+
+      <input
+        type="email"
+        placeholder="Email del Administrador"
+        [(ngModel)]="empresa.email_admin"
+      >
+
+      <input
+        type="password"
+        placeholder="Contraseña"
+        [(ngModel)]="empresa.password"
+      >
+
+      <input
+        type="password"
+        placeholder="Confirmar Contraseña"
+        [(ngModel)]="empresa.confirmar_password"
+      >
+
+      <div class="buttons">
+
+        <button
+          class="btn-cancel"
+          (click)="volverPaso1()"
+        >
+          ATRÁS
+        </button>
+
+        <button
+          class="btn-next"
+          (click)="registrarEmpresa()"
+        >
+          REGISTRAR
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

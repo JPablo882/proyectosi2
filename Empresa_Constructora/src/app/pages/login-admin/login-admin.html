@@ -1,0 +1,41 @@
+<div class="container">
+
+  <div class="card">
+
+    <div class="icon">
+      🔑
+    </div>
+
+    <h1>Administrador</h1>
+    <p class="subtitle">Acceso de Personal Autorizado</p>
+
+    <input
+      type="text"
+      placeholder="Usuario o Email"
+      [(ngModel)]="loginData.identificador"
+    >
+
+    <input
+      type="password"
+      placeholder="Contraseña"
+      [(ngModel)]="loginData.password"
+      (keyup.enter)="iniciarSesionAdmin()"
+    >
+
+    <button
+      class="btn-login"
+      (click)="iniciarSesionAdmin()"
+    >
+      INGRESAR
+    </button>
+
+    <button
+      class="btn-back"
+      routerLink="/"
+    >
+      VOLVER AL INICIO
+    </button>
+
+  </div>
+
+</div>

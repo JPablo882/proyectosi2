@@ -1,0 +1,409 @@
+<div class="reportes-container">
+
+  <!-- PESTAÑAS DE NAVEGACIÓN -->
+  <div class="tab-navigation">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'tabular'"
+      (click)="activeTab = 'tabular'"
+    >
+      📊 Tablas de Auditoría
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'graficos'"
+      (click)="activeTab = 'graficos'"
+    >
+      📈 Dashboard Estadístico
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'estado_resultados'"
+      (click)="activeTab = 'estado_resultados'"
+    >
+      📄 Estado de Resultados
+    </button>
+  </div>
+
+  <!-- PESTAÑA 1: TABLAS DE AUDITORÍA -->
+  <div class="tab-content" *ngIf="activeTab === 'tabular'">
+
+    <!-- CLIENTES -->
+    <div class="card reporte-card">
+      <div class="card-header-actions">
+        <div>
+          <h2>Reporte de Clientes</h2>
+          <p class="section-desc">Clientes registrados y enlazados en el sistema de cotizaciones.</p>
+        </div>
+        <div class="export-actions">
+          <button class="btn-export pdf-btn" (click)="exportarClientesPdf()">
+            📄 Exportar PDF
+          </button>
+          <button class="btn-export excel-btn" (click)="exportarClientesExcel()">
+            🟢 Exportar Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="table-scroll-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 10%; text-align: center;">ID</th>
+              <th style="width: 35%;">Razón Social / Nombre</th>
+              <th style="width: 20%; text-align: center;">Teléfono</th>
+              <th style="width: 35%;">Dirección de Entrega</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of clientes">
+              <td style="text-align: center; font-weight: bold; color: #64748b;">{{ c.id_cliente }}</td>
+              <td><strong>{{ c.nombre }}</strong></td>
+              <td style="text-align: center;">{{ c.telefono || 'No disponible' }}</td>
+              <td>{{ c.direccion || 'No disponible' }}</td>
+            </tr>
+            <tr *ngIf="clientes.length === 0">
+              <td colspan="4" class="no-records-row">No hay clientes registrados en el sistema.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PROYECTOS -->
+    <div class="card reporte-card">
+      <div class="card-header-actions">
+        <div>
+          <h2>Reporte de Proyectos</h2>
+          <p class="section-desc">Auditoría de obras activas, ubicaciones físicas y su estado.</p>
+        </div>
+        <div class="export-actions">
+          <button class="btn-export pdf-btn" (click)="exportarProyectosPdf()">
+            📄 Exportar PDF
+          </button>
+          <button class="btn-export excel-btn" (click)="exportarProyectosExcel()">
+            🟢 Exportar Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="table-scroll-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 10%; text-align: center;">ID</th>
+              <th style="width: 35%;">Nombre del Proyecto</th>
+              <th style="width: 35%;">Ubicación Geográfica</th>
+              <th style="width: 20%; text-align: center;">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of proyectos">
+              <td style="text-align: center; font-weight: bold; color: #64748b;">{{ p.id_proyecto }}</td>
+              <td><strong>{{ p.nombre }}</strong></td>
+              <td>{{ p.ubicacion }}</td>
+              <td style="text-align: center;">
+                <span class="status-pill" [ngClass]="(p.estado || 'planificación').toLowerCase()">
+                  {{ p.estado }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="proyectos.length === 0">
+              <td colspan="4" class="no-records-row">No hay proyectos registrados en el sistema.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MATERIALES -->
+    <div class="card reporte-card">
+      <div class="card-header-actions">
+        <div>
+          <h2>Reporte de Materiales e Inventario</h2>
+          <p class="section-desc">Listado del catálogo de insumos en el almacén de obra.</p>
+        </div>
+        <div class="export-actions">
+          <button class="btn-export pdf-btn" (click)="exportarMaterialesPdf()">
+            📄 Exportar PDF
+          </button>
+          <button class="btn-export excel-btn" (click)="exportarMaterialesExcel()">
+            🟢 Exportar Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="table-scroll-container">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 10%; text-align: center;">ID</th>
+              <th style="width: 50%;">Descripción del Material</th>
+              <th style="width: 20%; text-align: right;">Precio Unitario</th>
+              <th style="width: 20%; text-align: right;">Stock Actual</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of materiales">
+              <td style="text-align: center; font-weight: bold; color: #64748b;">{{ m.id_material }}</td>
+              <td><strong>{{ m.nombre }}</strong></td>
+              <td style="text-align: right; font-weight: bold; color: #ff7043;">{{ m.precio | number:'1.2-2' }} Bs</td>
+              <td style="text-align: right; font-weight: 700;">{{ m.stock }} Unidades</td>
+            </tr>
+            <tr *ngIf="materiales.length === 0">
+              <td colspan="4" class="no-records-row">No hay materiales en el catálogo.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PESTAÑA 2: GRÁFICOS Y ESTADÍSTICAS -->
+  <div class="tab-content" *ngIf="activeTab === 'graficos'">
+
+    <!-- BOTÓN DE EXPORTACIÓN EJECUTIVA COMPLETA -->
+    <div class="dossier-banner">
+      <div class="banner-text">
+        <h3>Dossier Financiero Ejecutivo</h3>
+        <p>Genera un informe gerencial consolidado con los gráficos e indicadores en formato PDF listo para impresión.</p>
+      </div>
+      <button class="btn-executive" (click)="exportarReporteEjecutivoPdf()">
+        👑 Generar PDF Ejecutivo
+      </button>
+    </div>
+
+    <!-- TARJETAS DE MÉTICAS PRINCIPALES -->
+    <div class="kpi-financial-strip">
+      
+      <div class="card metric-card income">
+        <span class="metric-label">Ingresos Consolidados</span>
+        <strong class="metric-value">{{ totalIngresos | number:'1.2-2' }} Bs</strong>
+        <p class="metric-desc">Flujo acumulado por cuotas de proyectos</p>
+      </div>
+
+      <div class="card metric-card expense">
+        <span class="metric-label">Egresos Consolidados</span>
+        <strong class="metric-value">{{ totalEgresos | number:'1.2-2' }} Bs</strong>
+        <p class="metric-desc">Compras aprobadas y planillas pagadas</p>
+      </div>
+
+      <div class="card metric-card balance" [ngClass]="balanceNeto >= 0 ? 'positive' : 'negative'">
+        <span class="metric-label">Balance Neto en Caja</span>
+        <strong class="metric-value">{{ balanceNeto | number:'1.2-2' }} Bs</strong>
+        <p class="metric-desc">Disponibilidad líquida de flujo de caja</p>
+      </div>
+
+    </div>
+
+    <!-- CHARTS PANEL LAYOUT -->
+    <div class="charts-grid">
+      
+      <!-- LINE CHART (INGRESOS VS EGRESOS) -->
+      <div class="card chart-card">
+        <h3>Evolución de Flujo Mensual (Ingresos vs Egresos)</h3>
+        <p class="chart-subtitle">Historial de caja acumulado en el primer semestre de gestión.</p>
+        
+        <div class="svg-container">
+          <svg width="100%" height="220" viewBox="0 0 540 220" class="svg-chart">
+            <!-- Grid Lines -->
+            <line x1="30" y1="30" x2="510" y2="30" stroke="#f1f5f9" stroke-width="1" />
+            <line x1="30" y1="75" x2="510" y2="75" stroke="#f1f5f9" stroke-width="1" />
+            <line x1="30" y1="120" x2="510" y2="120" stroke="#f1f5f9" stroke-width="1" />
+            <line x1="30" y1="160" x2="510" y2="160" stroke="#cbd5e1" stroke-width="1.5" />
+            
+            <!-- Lines Areas -->
+            <path [attr.d]="'M 30,160 L ' + linePointsIng + ' L 510,160 Z'" fill="rgba(59, 130, 246, 0.08)" />
+            <path [attr.d]="'M 30,160 L ' + linePointsEgr + ' L 510,160 Z'" fill="rgba(239, 68, 68, 0.06)" />
+
+            <!-- Polylines -->
+            <polyline [attr.points]="linePointsIng" fill="none" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" />
+            <polyline [attr.points]="linePointsEgr" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" />
+
+            <!-- Dots & Tooltips -->
+            <g *ngFor="let pt of svgLinePoints">
+              <circle [attr.cx]="pt.x" [attr.y]="pt.yIng" [attr.cy]="pt.yIng" r="5" fill="#3b82f6" stroke="white" stroke-width="1.5" />
+              <circle [attr.cx]="pt.x" [attr.y]="pt.yEgr" [attr.cy]="pt.yEgr" r="5" fill="#ef4444" stroke="white" stroke-width="1.5" />
+              
+              <text [attr.x]="pt.x" y="180" class="axis-text" text-anchor="middle">{{ pt.mes }}</text>
+              <text [attr.x]="pt.x" [attr.y]="pt.yIng - 10" class="tooltip-text ing" text-anchor="middle">{{ pt.ingVal / 1000 }}k</text>
+              <text [attr.x]="pt.x" [attr.y]="pt.yEgr - 10" class="tooltip-text egr" text-anchor="middle">{{ pt.egrVal / 1000 }}k</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="chart-legend">
+          <div class="legend-item"><span class="color-dot blue"></span> Ingresos</div>
+          <div class="legend-item"><span class="color-dot red"></span> Egresos</div>
+        </div>
+      </div>
+
+      <!-- BAR CHART (GASTOS POR PROYECTO) -->
+      <div class="card chart-card">
+        <h3>Distribución de Costos de Obra por Proyecto Activo</h3>
+        <p class="chart-subtitle">Costo de adquisición de materiales y pago de personal de cuadrillas.</p>
+
+        <div class="svg-container">
+          <svg width="100%" height="220" viewBox="0 0 540 220" class="svg-chart">
+            <!-- Base Line -->
+            <line x1="30" y1="170" x2="510" y2="170" stroke="#cbd5e1" stroke-width="1.5" />
+
+            <g *ngFor="let b of barChartProjects">
+              <!-- Bar Rect -->
+              <rect [attr.x]="b.x" [attr.y]="170 - b.height" width="40" [attr.height]="b.height" fill="url(#orangeGrad)" rx="3" ry="3" />
+              
+              <!-- Value Label -->
+              <text [attr.x]="b.x + 20" [attr.y]="160 - b.height" class="bar-value" text-anchor="middle">
+                {{ b.monto / 1000 | number:'1.0-0' }}k Bs
+              </text>
+              
+              <!-- Axis Label -->
+              <text [attr.x]="b.x + 20" y="190" class="axis-text" text-anchor="middle">
+                {{ b.nombre.length > 12 ? (b.nombre | slice:0:10) + '..' : b.nombre }}
+              </text>
+            </g>
+
+            <!-- Definitions -->
+            <defs>
+              <linearGradient id="orangeGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#fb923c" />
+                <stop offset="100%" stop-color="#ff6b3d" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- PESTAÑA 3: ESTADO DE RESULTADOS (EXCEL STYLE) -->
+  <div class="tab-content" *ngIf="activeTab === 'estado_resultados'">
+    <div class="card reporte-card">
+      <div class="card-header-actions">
+        <div>
+          <h2>Estado de Resultados (Acumulado Histórico)</h2>
+          <p class="section-desc">Reporte financiero consolidado calculando el costo de ventas en base al inventario final.</p>
+        </div>
+        <div class="export-actions">
+          <button class="btn-export pdf-btn" (click)="exportarEstadoResultadosPdf()">
+            📄 Exportar PDF
+          </button>
+          <button class="btn-export excel-btn" (click)="exportarEstadoResultadosExcel()">
+            🟢 Exportar Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="table-scroll-container" style="background-color: white; padding: 20px;">
+        <div *ngIf="!estadoResultados" style="text-align: center; padding: 40px; color: #64748b;">
+          Cargando datos financieros...
+        </div>
+
+        <table *ngIf="estadoResultados" class="accounting-table" style="width: 100%; max-width: 800px; margin: 0 auto; border-collapse: collapse; font-family: 'Courier New', Courier, monospace; font-size: 14px; border: 1px solid #cbd5e1;">
+          <thead>
+            <tr>
+              <th colspan="2" style="background-color: #0b2c6b; color: white; padding: 12px; text-align: center; font-family: Arial, sans-serif; font-size: 16px;">
+                CONSTRUCTPRO S.A.<br>
+                <span style="font-size: 12px; font-weight: normal;">ESTADO DE RESULTADOS CONSOLIDADO</span>
+              </th>
+            </tr>
+            <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+              <th style="padding: 10px; text-align: left; font-family: Arial, sans-serif;">CONCEPTO</th>
+              <th style="padding: 10px; text-align: right; font-family: Arial, sans-serif; width: 30%;">MONTO (Bs)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Ingresos -->
+            <tr>
+              <td style="padding: 8px 10px;">Ingresos Operativos Totales</td>
+              <td style="padding: 8px 10px; text-align: right;">{{ estadoResultados.ingresos_operativos_bob | number:'1.2-2' }}</td>
+            </tr>
+            
+            <!-- Costo de Ventas Header -->
+            <tr style="background-color: #f8fafc;">
+              <td colspan="2" style="padding: 15px 10px 5px 10px; font-weight: bold; font-family: Arial, sans-serif; color: #475569;">Determinación del Costo de Ventas:</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 10px; padding-left: 30px;">Inventario Inicial</td>
+              <td style="padding: 8px 10px; text-align: right;">{{ estadoResultados.inventario_inicial_bob | number:'1.2-2' }}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 10px; padding-left: 30px;">(+) Compras de Materiales</td>
+              <td style="padding: 8px 10px; text-align: right;">{{ estadoResultados.compras_totales_bob | number:'1.2-2' }}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 10px; padding-left: 30px;">(-) Inventario Final Valorizado</td>
+              <td style="padding: 8px 10px; text-align: right; border-bottom: 1px solid #94a3b8;">{{ estadoResultados.inventario_final_bob | number:'1.2-2' }}</td>
+            </tr>
+            
+            <!-- Costo de Ventas Total -->
+            <tr>
+              <td style="padding: 8px 10px; font-weight: bold; color: #ef4444;">Costo de Ventas Total</td>
+              <td style="padding: 8px 10px; text-align: right; font-weight: bold; color: #ef4444;">({{ estadoResultados.costo_de_ventas_bob | number:'1.2-2' }})</td>
+            </tr>
+            
+            <!-- Utilidad Bruta -->
+            <tr style="background-color: #e2e8f0; border-top: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1;">
+              <td style="padding: 12px 10px; font-weight: bold; font-family: Arial, sans-serif; font-size: 15px;">UTILIDAD BRUTA</td>
+              <td style="padding: 12px 10px; text-align: right; font-weight: bold; font-size: 15px;">{{ estadoResultados.utilidad_bruta_bob | number:'1.2-2' }}</td>
+            </tr>
+
+            <!-- Gastos Operativos Header -->
+            <tr style="background-color: #f8fafc;">
+              <td colspan="2" style="padding: 15px 10px 5px 10px; font-weight: bold; font-family: Arial, sans-serif; color: #475569;">Gastos Operativos:</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 10px; padding-left: 30px;">(-) Planillas y Salarios de Personal</td>
+              <td style="padding: 8px 10px; text-align: right;">{{ estadoResultados.planillas_totales_bob | number:'1.2-2' }}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 10px; padding-left: 30px;">(-) Mantenimiento de Maquinaria y Activos</td>
+              <td style="padding: 8px 10px; text-align: right;">{{ estadoResultados.mantenimiento_totales_bob | number:'1.2-2' }}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 10px; padding-left: 30px;">(-) Depreciación Acumulada de Activos Fijos</td>
+              <td style="padding: 8px 10px; text-align: right;">{{ estadoResultados.depreciacion_totales_bob | number:'1.2-2' }}</td>
+            </tr>
+            <tr>
+              <td style="padding: 8px 10px; padding-left: 30px;">(-) Otros Gastos Generales y Administrativos</td>
+              <td style="padding: 8px 10px; text-align: right; border-bottom: 1px solid #94a3b8;">{{ estadoResultados.otros_gastos_bob | number:'1.2-2' }}</td>
+            </tr>
+            
+            <!-- Gastos Operativos Total -->
+            <tr>
+              <td style="padding: 8px 10px; font-weight: bold; color: #ef4444;">Gastos Operativos Total</td>
+              <td style="padding: 8px 10px; text-align: right; font-weight: bold; color: #ef4444;">({{ estadoResultados.gastos_operativos_bob | number:'1.2-2' }})</td>
+            </tr>
+            
+            <!-- Utilidad Operativa -->
+            <tr style="background-color: #f1f5f9; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1;">
+              <td style="padding: 10px; font-weight: bold; font-family: Arial, sans-serif;">UTILIDAD OPERATIVA (EBIT)</td>
+              <td style="padding: 10px; text-align: right; font-weight: bold;">{{ estadoResultados.utilidad_operativa_bob | number:'1.2-2' }}</td>
+            </tr>
+
+            <!-- Impuestos -->
+            <tr style="background-color: #f8fafc;">
+              <td style="padding: 8px 10px; padding-left: 30px;">(-) Impuesto sobre las Utilidades (IUE 25%)</td>
+              <td style="padding: 8px 10px; text-align: right; border-bottom: 1px solid #94a3b8;">{{ estadoResultados.impuestos_bob | number:'1.2-2' }}</td>
+            </tr>
+            
+            <!-- Utilidad Neta -->
+            <tr style="background-color: #dbeafe; border-top: 2px double #3b82f6; border-bottom: 2px double #3b82f6;">
+              <td style="padding: 15px 10px; font-weight: bold; font-family: Arial, sans-serif; font-size: 16px; color: #1e3a8a;">UTILIDAD NETA DEL EJERCICIO</td>
+              <td style="padding: 15px 10px; text-align: right; font-weight: bold; font-size: 16px; color: #1e3a8a;">{{ estadoResultados.utilidad_neta_bob | number:'1.2-2' }}</td>
+            </tr>
+
+          </tbody>
+        </table>
+        
+        <div style="text-align: center; margin-top: 20px;">
+          <p style="font-size: 12px; color: #94a3b8;">Este reporte es generado automáticamente. El inventario final ha sido calculado al valor de compra de los ítems en stock.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

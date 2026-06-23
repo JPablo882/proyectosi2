@@ -1,0 +1,470 @@
+<div class="rrhh-container">
+
+  <!-- PESTAÑAS SUPERIORES -->
+  <div class="tab-navigation">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'personal'"
+      (click)="activeTab = 'personal'"
+    >
+      👷 Registro y Personal de Obra
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'organigrama'"
+      (click)="activeTab = 'organigrama'"
+    >
+      📇 Organigrama de Obras y KPIs
+    </button>
+  </div>
+
+  <!-- PESTAÑA 1: REGISTRO Y CONTROL DE PERSONAL -->
+  <div class="tab-content" *ngIf="activeTab === 'personal'">
+    
+    <div class="rrhh-grid">
+      <!-- FORMULARIO DE REGISTRO -->
+      <div class="card form-card">
+        <h2>Registro de Nuevo Empleado</h2>
+        <p class="section-desc">Registra el personal técnico y obrero en la base de datos de la empresa.</p>
+
+        <!-- Listado de cargos sugeridos para construcción / proyectos -->
+        <div class="cargos-sugeridos-container">
+          <span class="sugeridos-label">Cargos estándar (haz clic para asignar):</span>
+          <div class="cargos-sugeridos-flex">
+            <span class="cargo-badge" (click)="seleccionarCargo('Ingeniero Civil')" title="Ingeniero Civil">Ingeniero Civil</span>
+            <span class="cargo-badge" (click)="seleccionarCargo('Arquitecto')" title="Arquitecto">Arquitecto</span>
+            <span class="cargo-badge" (click)="seleccionarCargo('Residente de Obra')" title="Residente de Obra">Residente de Obra</span>
+            <span class="cargo-badge" (click)="seleccionarCargo('Maestro de Obra')" title="Maestro de Obra">Maestro de Obra</span>
+            <span class="cargo-badge" (click)="seleccionarCargo('Albañil')" title="Albañil">Albañil</span>
+            <span class="cargo-badge" (click)="seleccionarCargo('Ayudante')" title="Ayudante">Ayudante</span>
+          </div>
+        </div>
+
+        <div class="formulario">
+          <div class="form-group">
+            <label>Nombre Completo</label>
+            <input
+              type="text"
+              [(ngModel)]="empleado.nombre"
+              placeholder="Ej: Ing. Jorge Valdivia"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Cargo / Rol de Obra</label>
+            <input
+              type="text"
+              [(ngModel)]="empleado.cargo"
+              placeholder="Ej: Albañil / Residente / Maestro de Obra"
+            >
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Salario Mensual (Bs)</label>
+              <input
+                type="number"
+                [(ngModel)]="empleado.salario"
+                placeholder="Ej: 4500"
+              >
+            </div>
+
+            <div class="form-group">
+              <label>Teléfono de Contacto</label>
+              <input
+                type="text"
+                [(ngModel)]="empleado.telefono"
+                placeholder="Ej: 76543210"
+              >
+            </div>
+          </div>
+
+          <button class="btn-submit" (click)="registrarEmpleado()">
+            💾 Registrar Empleado
+          </button>
+        </div>
+      </div>
+
+      <!-- TABLA DE LISTADO -->
+      <div class="card list-card">
+        <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; gap: 15px;">
+          <h2 style="align-self: flex-start; margin: 0;">Listado del Personal Registrado</h2>
+          <p class="section-desc" style="align-self: flex-start; margin-top: -10px;">Lista completa de empleados activos de la empresa constructora.</p>
+          
+          <div class="search-container" style="position: relative; width: 550px; max-width: 100%;">
+            <span style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); font-size: 16px;">🔍</span>
+            <input 
+              type="text" 
+              [(ngModel)]="terminoBusqueda" 
+              placeholder="Buscar por ID, nombre o cargo..."
+              style="width: 100%; padding: 12px 15px 12px 45px; border-radius: 10px; border: 1px solid #cbd5e1; font-size: 15px; outline: none; transition: all 0.2s; background: #f8fafc; box-sizing: border-box; box-shadow: 0 2px 5px rgba(0,0,0,0.05);"
+              onfocus="this.style.borderColor='#ff6b3d'; this.style.boxShadow='0 0 0 4px rgba(255, 107, 61, 0.15)';"
+              onblur="this.style.borderColor='#cbd5e1'; this.style.boxShadow='0 2px 5px rgba(0,0,0,0.05)';"
+            >
+          </div>
+        </div>
+
+        <div class="table-scroll-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 8%; text-align: center;">ID</th>
+                <th style="width: 30%;">Nombre</th>
+                <th style="width: 25%;">Cargo</th>
+                <th style="width: 15%; text-align: right;">Salario</th>
+                <th style="width: 12%; text-align: center;">Teléfono</th>
+                <th style="width: 10%; text-align: center;">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let e of empleadosFiltrados">
+                <td style="text-align: center; font-weight: bold; color: #64748b;">{{ e.id_empleados }}</td>
+                <td><strong>{{ e.nombre }}</strong></td>
+                <td><span class="role-pill">{{ e.cargo }}</span></td>
+                <td style="text-align: right; font-weight: bold;">{{ e.salario | number:'1.2-2' }} Bs</td>
+                <td style="text-align: center;">{{ e.telefono }}</td>
+                <td style="text-align: center;">
+                  <div class="action-buttons-group">
+                    <button class="btn-action edit-btn" (click)="editarEmpleado(e)" title="Editar">✏️</button>
+                    <button class="btn-action delete-btn" (click)="eliminarEmpleado(e.id_empleados)" title="Eliminar">🗑️</button>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="empleados.length === 0">
+                <td colspan="6" class="no-records-row">No hay empleados registrados en la constructora.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PESTAÑA 2: ORGANIGRAMA Y DESEMPEÑO (KPIs) -->
+  <div class="tab-content" *ngIf="activeTab === 'organigrama'">
+    
+    <!-- HEADER DE FILTRO -->
+    <div class="card filter-card">
+      <div class="filter-header">
+        <div>
+          <h2>Organigrama de Cuadrilla de Obra</h2>
+          <p class="section-desc">Estructura jerárquica de personal asignado al proyecto seleccionado.</p>
+        </div>
+        <div class="project-selector-wrapper">
+          <label>Proyecto Seleccionado:</label>
+          <select [ngModel]="selectedProyectoId" (ngModelChange)="seleccionarProyecto($event)">
+            <option *ngFor="let p of proyectos" [value]="p.id_proyecto">
+              🚧 {{ p.nombre }} ({{ p.estado }})
+            </option>
+            <option *ngIf="proyectos.length === 0" value="">-- No hay proyectos --</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- DOUBLE COLUMNS: ORGANIGRAMA TREE & KPI PANEL -->
+    <div class="organigrama-layout">
+      
+      <!-- COLUMNA IZQUIERDA: ÁRBOL CSS -->
+      <div class="card tree-card">
+        <h3>Estructura Organizacional de Obra</h3>
+        
+        <div class="organigrama-tree-wrapper" *ngIf="obtenerProyectoSeleccionado(); else noProjectTemplate">
+          
+          <div class="organigrama-tree">
+            
+            <!-- NIVEL 1: GERENTE DE PROYECTOS -->
+            <div class="tree-node level-1">
+              <span class="node-role">Gerente General</span>
+              <strong class="node-name">Ing. Carlos Mendoza</strong>
+              <span class="node-details">Oficina Central</span>
+            </div>
+            
+            <div class="tree-connector-v"></div>
+            
+            <!-- NIVEL 2: PROYECTO SELECCIONADO -->
+            <div class="tree-node level-2">
+              <span class="node-role">Proyecto / Obra</span>
+              <strong class="node-name">{{ obtenerProyectoSeleccionado()?.nombre }}</strong>
+              <span class="node-details">{{ obtenerProyectoSeleccionado()?.ubicacion }}</span>
+            </div>
+            
+            <div class="tree-connector-v"></div>
+            
+            <!-- NIVEL 3: STAFF TÉCNICO Y MAESTRO -->
+            <div class="tree-level-row">
+              
+              <!-- INGENIERO SUPERVISOR -->
+              <div class="tree-column-branch">
+                <div class="connector-h-left"></div>
+                <div class="connector-v-down"></div>
+                <div 
+                  class="tree-node level-3 supervisor"
+                  [class.active-kpi]="selectedEmpleadoForKpi?.id_empleados === obtenerProyectoSeleccionado()?.id_ingeniero"
+                  (click)="seleccionarEmpleadoForKpis(obtenerEmpleadoPorId(obtenerProyectoSeleccionado()?.id_ingeniero))"
+                >
+                  <span class="node-role">Ingeniero Supervisor</span>
+                  <strong class="node-name" *ngIf="obtenerProyectoSeleccionado()?.id_ingeniero">
+                    {{ obtenerEmpleadoPorId(obtenerProyectoSeleccionado()?.id_ingeniero)?.nombre }}
+                  </strong>
+                  <strong class="node-name unassigned" *ngIf="!obtenerProyectoSeleccionado()?.id_ingeniero">
+                    Sin Asignar
+                  </strong>
+                  <span class="node-details" *ngIf="obtenerProyectoSeleccionado()?.id_ingeniero">
+                    Telf: {{ obtenerEmpleadoPorId(obtenerProyectoSeleccionado()?.id_ingeniero)?.telefono }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- INGENIERO RESIDENTE -->
+              <div class="tree-column-branch">
+                <div class="connector-h-center"></div>
+                <div class="connector-v-down"></div>
+                <div 
+                  class="tree-node level-3 resident"
+                  [class.active-kpi]="selectedEmpleadoForKpi?.id_empleados === obtenerProyectoSeleccionado()?.id_residente"
+                  (click)="seleccionarEmpleadoForKpis(obtenerEmpleadoPorId(obtenerProyectoSeleccionado()?.id_residente))"
+                >
+                  <span class="node-role">Residente de Obra</span>
+                  <strong class="node-name" *ngIf="obtenerProyectoSeleccionado()?.id_residente">
+                    {{ obtenerEmpleadoPorId(obtenerProyectoSeleccionado()?.id_residente)?.nombre }}
+                  </strong>
+                  <strong class="node-name unassigned" *ngIf="!obtenerProyectoSeleccionado()?.id_residente">
+                    Sin Asignar
+                  </strong>
+                  <span class="node-details" *ngIf="obtenerProyectoSeleccionado()?.id_residente">
+                    Telf: {{ obtenerEmpleadoPorId(obtenerProyectoSeleccionado()?.id_residente)?.telefono }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- MAESTRO DE OBRA -->
+              <div class="tree-column-branch">
+                <div class="connector-h-right"></div>
+                <div class="connector-v-down"></div>
+                <div 
+                  class="tree-node level-3 maestro"
+                  [class.active-kpi]="selectedEmpleadoForKpi?.id_empleados === obtenerProyectoSeleccionado()?.id_maestro"
+                  (click)="seleccionarEmpleadoForKpis(obtenerEmpleadoPorId(obtenerProyectoSeleccionado()?.id_maestro))"
+                >
+                  <span class="node-role">Maestro de Obra</span>
+                  <strong class="node-name" *ngIf="obtenerProyectoSeleccionado()?.id_maestro">
+                    {{ obtenerEmpleadoPorId(obtenerProyectoSeleccionado()?.id_maestro)?.nombre }}
+                  </strong>
+                  <strong class="node-name unassigned" *ngIf="!obtenerProyectoSeleccionado()?.id_maestro">
+                    Sin Asignar
+                  </strong>
+                  <span class="node-details" *ngIf="obtenerProyectoSeleccionado()?.id_maestro">
+                    Telf: {{ obtenerEmpleadoPorId(obtenerProyectoSeleccionado()?.id_maestro)?.telefono }}
+                  </span>
+                </div>
+
+                <!-- SUB-RAMA: OBREROS Y AYUDANTES REPORTAN AL MAESTRO -->
+                <div class="maestro-sub-connectors" *ngIf="obtenerProyectoSeleccionado()?.id_maestro">
+                  <div class="tree-connector-v sub-v"></div>
+                  
+                  <div class="sub-crew-flex">
+                    <!-- ALBAÑILES -->
+                    <div class="crew-category">
+                      <div class="category-header">🏗️ Albañiles</div>
+                      <div class="crew-list">
+                        <div 
+                          class="crew-item-card" 
+                          *ngFor="let alb of obtenerEmpleadosPorIds(obtenerProyectoSeleccionado()?.id_albaniles)"
+                          [class.active-kpi]="selectedEmpleadoForKpi?.id_empleados === alb.id_empleados"
+                          (click)="seleccionarEmpleadoForKpis(alb)"
+                        >
+                          <strong>{{ alb.nombre }}</strong>
+                          <span>Telf: {{ alb.telefono }}</span>
+                        </div>
+                        <div class="crew-empty" *ngIf="!obtenerProyectoSeleccionado()?.id_albaniles || obtenerProyectoSeleccionado()?.id_albaniles.length === 0">
+                          Ninguno asignado
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- AYUDANTES -->
+                    <div class="crew-category">
+                      <div class="category-header">🛠️ Ayudantes</div>
+                      <div class="crew-list">
+                        <div 
+                          class="crew-item-card" 
+                          *ngFor="let ayu of obtenerEmpleadosPorIds(obtenerProyectoSeleccionado()?.id_ayudantes)"
+                          [class.active-kpi]="selectedEmpleadoForKpi?.id_empleados === ayu.id_empleados"
+                          (click)="seleccionarEmpleadoForKpis(ayu)"
+                        >
+                          <strong>{{ ayu.nombre }}</strong>
+                          <span>Telf: {{ ayu.telefono }}</span>
+                        </div>
+                        <div class="crew-empty" *ngIf="!obtenerProyectoSeleccionado()?.id_ayudantes || obtenerProyectoSeleccionado()?.id_ayudantes.length === 0">
+                          Ninguno asignado
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+        <ng-template #noProjectTemplate>
+          <div class="no-project-msg">
+            <p>Seleccione un proyecto activo para visualizar su organigrama de cuadrilla.</p>
+          </div>
+        </ng-template>
+      </div>
+
+      <!-- COLUMNA DERECHA: FICHA DE RENDIMIENTO / KPIs -->
+      <div class="card kpi-card">
+        <h3>Ficha de Rendimiento & KPIs</h3>
+        
+        <div class="kpi-panel-container" *ngIf="selectedEmpleadoForKpi; else noEmployeeSelectedTemplate">
+          
+          <div class="employee-card-header">
+            <div class="avatar-circle">
+              {{ selectedEmpleadoForKpi.nombre.charAt(0) }}
+            </div>
+            <div class="header-text">
+              <h4>{{ selectedEmpleadoForKpi.nombre }}</h4>
+              <span class="role-badge">{{ selectedEmpleadoForKpi.cargo }}</span>
+            </div>
+          </div>
+
+          <div class="employee-details-strip">
+            <div class="strip-item">
+              <span class="strip-label">Teléfono:</span>
+              <span class="strip-value">{{ selectedEmpleadoForKpi.telefono }}</span>
+            </div>
+            <div class="strip-item">
+              <span class="strip-label">Salario Base:</span>
+              <span class="strip-value highlight">{{ selectedEmpleadoForKpi.salario }} Bs</span>
+            </div>
+          </div>
+
+          <!-- GAUGES RADIALES (SVG) -->
+          <div class="kpi-radial-gauges">
+            <h5>Indicadores de Desempeño</h5>
+            
+            <div class="gauges-row">
+              
+              <!-- ASISTENCIA -->
+              <div class="radial-gauge-item">
+                <svg width="85" height="85" viewBox="0 0 36 36" class="radial-svg">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="circle-progress orange" 
+                        [attr.stroke-dasharray]="getKPIs(selectedEmpleadoForKpi.id_empleados).asistencia + ', 100'"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <text x="18" y="20.35" class="percentage-text">{{ getKPIs(selectedEmpleadoForKpi.id_empleados).asistencia }}%</text>
+                </svg>
+                <span class="gauge-name">Asistencia</span>
+              </div>
+
+              <!-- EFICIENCIA -->
+              <div class="radial-gauge-item">
+                <svg width="85" height="85" viewBox="0 0 36 36" class="radial-svg">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="circle-progress blue" 
+                        [attr.stroke-dasharray]="getKPIs(selectedEmpleadoForKpi.id_empleados).eficiencia + ', 100'"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <text x="18" y="20.35" class="percentage-text">{{ getKPIs(selectedEmpleadoForKpi.id_empleados).eficiencia }}%</text>
+                </svg>
+                <span class="gauge-name">Eficiencia Tareas</span>
+              </div>
+
+              <!-- SEGURIDAD -->
+              <div class="radial-gauge-item">
+                <svg width="85" height="85" viewBox="0 0 36 36" class="radial-svg">
+                  <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <path class="circle-progress green" 
+                        [attr.stroke-dasharray]="getKPIs(selectedEmpleadoForKpi.id_empleados).seguridad + ', 100'"
+                        d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                  <text x="18" y="20.35" class="percentage-text">{{ getKPIs(selectedEmpleadoForKpi.id_empleados).seguridad }}%</text>
+                </svg>
+                <span class="gauge-name">Cumplimiento EPP</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- EVALUACIÓN DETALLADA -->
+          <div class="kpi-evaluation-box">
+            <h5>Evaluación y Notas del Auditor</h5>
+            <p class="evaluation-text">{{ getKPIStatusText(selectedEmpleadoForKpi.id_empleados) }}</p>
+          </div>
+
+        </div>
+        <ng-template #noEmployeeSelectedTemplate>
+          <div class="no-employee-msg">
+            <p>Seleccione un nodo en el organigrama para auditar las métricas del empleado.</p>
+          </div>
+        </ng-template>
+      </div>
+
+    </div>
+
+    <!-- PANEL INFERIOR: PERSONAL EN RESERVA (DISPONIBLE) -->
+    <div class="card reserve-card">
+      <h3>Personal Disponible (En Reserva / No Asignado)</h3>
+      <p class="section-desc">Empleados que actualmente no están asignados a ninguna obra activa.</p>
+
+      <div class="reserve-grid">
+        <div 
+          class="reserve-item-card" 
+          *ngFor="let r of obtenerEmpleadosDisponibles()"
+          [class.active-kpi]="selectedEmpleadoForKpi?.id_empleados === r.id_empleados"
+          (click)="seleccionarEmpleadoForKpis(r)"
+        >
+          <div class="reserve-avatar">{{ r.nombre.charAt(0) }}</div>
+          <div class="reserve-info">
+            <strong>{{ r.nombre }}</strong>
+            <span class="reserve-role">{{ r.cargo }}</span>
+          </div>
+        </div>
+        <div class="no-reserve-msg" *ngIf="obtenerEmpleadosDisponibles().length === 0">
+          Todo el personal se encuentra asignado a obras actualmente.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EDIT MODAL DIALOG -->
+  <div class="modal-overlay" *ngIf="isEditModalOpen">
+    <div class="modal-card">
+      <h2>Editar Empleado</h2>
+      
+      <div class="formulario">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" [(ngModel)]="editEmpleadoData.nombre">
+        </div>
+
+        <div class="form-group">
+          <label>Cargo</label>
+          <input type="text" [(ngModel)]="editEmpleadoData.cargo">
+        </div>
+
+        <div class="form-group">
+          <label>Salario</label>
+          <input type="number" [(ngModel)]="editEmpleadoData.salario">
+        </div>
+
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="text" [(ngModel)]="editEmpleadoData.telefono">
+        </div>
+      </div>
+
+      <div class="modal-acciones">
+        <button class="guardar" (click)="guardarEdicion()">✅ Guardar Cambios</button>
+        <button class="cancelar" (click)="cerrarModal()">❌ Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+</div>

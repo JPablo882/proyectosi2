@@ -1,0 +1,232 @@
+<div class="dashboard-container">
+
+  <!-- SIDEBAR -->
+
+  <aside class="sidebar">
+
+    <div class="logo">
+
+      <h2>ConstructPro</h2>
+
+      <p class="company-name">{{ nombreEmpresa || 'Panel Administrativo' }}</p>
+
+    </div>
+
+    <nav>
+
+      <ul>
+
+        <li routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="9" rx="1" />
+            <rect x="14" y="3" width="7" height="5" rx="1" />
+            <rect x="14" y="12" width="7" height="9" rx="1" />
+            <rect x="3" y="16" width="7" height="5" rx="1" />
+          </svg>
+          <span>Dashboard</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/clientes" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span>Clientes</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/presupuesto" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23" />
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+          </svg>
+          <span>Presupuesto</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/proyectos" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M9 21V9a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v12" />
+          </svg>
+          <span>Proyectos</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/rrhh" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <polyline points="16 11 18 13 22 9" />
+          </svg>
+          <span>RRHH</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/compras" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+          </svg>
+          <span>Compras</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/inventario" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+            <line x1="12" y1="22.08" x2="12" y2="12" />
+          </svg>
+          <span>Inventario</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/reportes" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+            <polyline points="10 9 9 9 8 9" />
+          </svg>
+          <span>Reportes</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/chatbot" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            <circle cx="9" cy="9" r="1" fill="currentColor" />
+            <circle cx="15" cy="9" r="1" fill="currentColor" />
+            <path d="M9 13a3 3 0 0 0 6 0" />
+          </svg>
+          <span>Chatbot</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/avances" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+            <polyline points="17 6 23 6 23 12" />
+          </svg>
+          <span>Avances Proyecto</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/documentos" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+          <span>Documentos</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/activos" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+          </svg>
+          <span>Activos Fijos</span>
+        </li>
+
+        <li *ngIf="!esAdminGeneral" routerLink="/dashboard/perfil" routerLinkActive="active">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+            <circle cx="12" cy="7" r="4" />
+          </svg>
+          <span>Mi Perfil</span>
+        </li>
+
+        <li class="logout" (click)="cerrarSesion()">
+          <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          <span>Cerrar Sesión</span>
+        </li>
+
+      </ul>
+
+    </nav>
+
+  </aside>
+
+  <!-- CONTENIDO DINAMICO -->
+
+  <main class="main-content">
+
+    <!-- TOP BAR -->
+    <header class="dashboard-header">
+      <div class="header-left">
+        <span class="welcome-text">¡Bienvenido, {{ nombreEmpresa }}!</span>
+      </div>
+      <div class="header-right">
+        <!-- Interruptor de Tema (Modo Oscuro / Claro) -->
+        <button class="theme-toggle-btn" (click)="toggleTheme()" [title]="isDarkMode ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro'">
+          <span *ngIf="!isDarkMode">🌙</span>
+          <span *ngIf="isDarkMode">☀️</span>
+        </button>
+
+        <!-- Campanita de Notificaciones -->
+        <div class="notification-bell-container" style="position: relative;">
+          <div class="notification-bell" (click)="toggleNotifications()">
+            <svg class="bell-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="bellGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffe675" />
+                  <stop offset="30%" stop-color="#ffb900" />
+                  <stop offset="100%" stop-color="#f57c00" />
+                </linearGradient>
+                <linearGradient id="clapperGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#f57c00" />
+                  <stop offset="100%" stop-color="#d84315" />
+                </linearGradient>
+                <filter id="bellShadow" x="-20%" y="-20%" width="140%" height="150%">
+                  <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#000" flood-opacity="0.2" />
+                </filter>
+              </defs>
+              <!-- Clapper (orange bell tongue) -->
+              <path d="M 42 75 A 8 8 0 0 0 58 75 Z" fill="url(#clapperGrad)" />
+              
+              <!-- Top Loop -->
+              <rect x="44" y="10" width="12" height="10" rx="5" fill="#ffb900" />
+              
+              <!-- Bell body -->
+              <path d="M 50 16 
+                       C 36 16, 30 32, 30 52 
+                       C 30 62, 25 68, 18 68 
+                       C 16 68, 16 74, 20 74 
+                       L 80 74 
+                       C 84 74, 84 68, 82 68 
+                       C 75 68, 70 62, 70 52 
+                       C 70 32, 64 16, 50 16 Z" 
+                    fill="url(#bellGrad)" 
+                    filter="url(#bellShadow)" />
+            </svg>
+            <span class="bell-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+          </div>
+
+          <!-- Notification Popover Panel -->
+          <div class="notifications-panel" *ngIf="showNotifications">
+            <div class="panel-header">
+              <h4>Notificaciones</h4>
+              <button class="mark-read-btn" (click)="marcarLeidas()">Marcar como leídas</button>
+            </div>
+            <div class="panel-body">
+              <div class="notification-item" *ngFor="let note of notifications" [class.unread]="note.unread">
+                <div class="note-status-dot" *ngIf="note.unread"></div>
+                <div class="note-content">
+                  <p class="note-text">{{ note.text }}</p>
+                  <span class="note-time">{{ note.time }}</span>
+                </div>
+              </div>
+              <div class="no-notifications" *ngIf="notifications.length === 0">
+                No tienes notificaciones
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-content">
+      <router-outlet></router-outlet>
+    </div>
+
+  </main>
+
+</div>

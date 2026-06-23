@@ -1,0 +1,57 @@
+<div class="clientes-container">
+
+  <!-- TABLA CLIENTES -->
+
+  <div class="tabla-clientes">
+
+    <h2>Lista de Clientes</h2>
+
+    <div class="table-scroll-container">
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Dirección</th>
+            <th>Acciones</th>
+
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let c of clientes">
+
+            <td>{{ c.id_cliente }}</td>
+            <td>{{ c.nombre }}</td>
+            <td>{{ c.telefono }}</td>
+            <td>{{ c.direccion }}</td>
+
+            <td class="acciones">
+
+              
+
+              <button
+                class="eliminar"
+                (click)="eliminarCliente(c.id_cliente)"
+              >
+                🗑️
+              </button>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+    </div>
+
+  </div>
+
+</div>

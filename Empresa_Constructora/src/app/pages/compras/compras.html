@@ -1,0 +1,219 @@
+<div class="compras-page-container">
+
+  <div class="page-header">
+    <h1>🛒 Gestión de Compras y Órdenes de Compra</h1>
+    <p class="subtitle">Gestión de abastecimiento, proveedores, almacén e historial de adquisiciones.</p>
+  </div>
+
+  <!-- SECCIÓN SUPERIOR: HISTORIAL DE ÓRDENES DE COMPRA (APROBACIONES Y PDF) -->
+  <div class="card history-card">
+    <div class="history-header">
+      <h2>Historial de Órdenes de Compra (Auditoría)</h2>
+      <p class="section-desc">Aprueba órdenes pendientes, registra egresos en caliente y exporta documentos membretados.</p>
+    </div>
+
+    <div class="table-scroll-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 10%; text-align: center;">Nº Orden</th>
+            <th style="width: 25%;">Proveedor</th>
+            <th style="width: 15%; text-align: center;">Fecha</th>
+            <th style="width: 15%; text-align: right;">Total Neto</th>
+            <th style="width: 15%; text-align: center;">Estado</th>
+            <th style="width: 20%; text-align: center;">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let c of compras">
+            <td style="text-align: center; font-weight: bold; color: #64748b;">000{{ c.id_compra }}</td>
+            <td><strong>{{ obtenerNombreProveedor(c.id_proveedor) }}</strong></td>
+            <td style="text-align: center;">{{ c.fecha || 'Sin fecha' }}</td>
+            <td style="text-align: right; font-weight: 700; color: #ff7043;">{{ c.total | number:'1.2-2' }} Bs</td>
+            <td style="text-align: center;">
+              <span class="status-badge" [ngClass]="(c.estado || 'pendiente').toLowerCase()">
+                {{ c.estado || 'Pendiente' }}
+              </span>
+            </td>
+            <td style="text-align: center;">
+              <div class="action-buttons-group">
+                <!-- Botón de Aprobar -->
+                <button 
+                  *ngIf="(c.estado || 'Pendiente') === 'Pendiente'" 
+                  class="btn-action btn-approve"
+                  (click)="aprobarCompra(c.id_compra)"
+                  title="Aprobar Orden"
+                >
+                  ✓
+                </button>
+                <!-- Botón de Rechazar -->
+                <button 
+                  *ngIf="(c.estado || 'Pendiente') === 'Pendiente'" 
+                  class="btn-action btn-reject"
+                  (click)="rechazarCompra(c.id_compra)"
+                  title="Rechazar Orden"
+                >
+                  ✕
+                </button>
+                <!-- Botón Imprimir PDF -->
+                <button 
+                  class="btn-action btn-print"
+                  (click)="generarPdfOrden(c)"
+                  title="Imprimir PDF Membretado"
+                >
+                  📄 Imprimir
+                </button>
+              </div>
+            </td>
+          </tr>
+          <tr *ngIf="compras.length === 0">
+            <td colspan="6" class="no-records-row">No hay órdenes de compra registradas.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECCIÓN INFERIOR: FORMULARIOS DE REGISTRO -->
+  <div class="compras-grid">
+
+    <!-- REGISTRAR COMPRA (ORDEN) -->
+    <div class="card form-card">
+      <div class="form-header">
+        <h2>Registrar Nueva Compra (Orden)</h2>
+        <p>Inicia el proceso en estado PENDIENTE de aprobación por la administración.</p>
+      </div>
+
+      <div class="formulario">
+        <div class="form-group">
+          <label>Proveedor Seleccionado</label>
+          <select [(ngModel)]="compra.id_proveedor">
+            <option value="">-- Seleccionar Proveedor --</option>
+            <option *ngFor="let p of proveedores" [value]="p.id_proveedor">
+              {{ p.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fecha de la Orden</label>
+            <input type="date" [(ngModel)]="compra.fecha">
+          </div>
+
+          <div class="form-group">
+            <label>Total Neto Estimado (Bs)</label>
+            <input type="number" [(ngModel)]="compra.total" placeholder="Ej: 5000">
+          </div>
+        </div>
+
+        <button class="btn-submit btn-orange" (click)="registrarCompra()">
+          🛒 Guardar Orden de Compra
+        </button>
+      </div>
+    </div>
+
+    <!-- AGREGAR DETALLE (ITEMS) -->
+    <div class="card form-card">
+      <div class="form-header">
+        <h2>Detallar Items de la Compra</h2>
+        <p>Añade materiales y cantidades a las órdenes registradas.</p>
+      </div>
+
+      <div class="formulario">
+        <div class="form-group">
+          <label>Seleccionar Orden de Compra</label>
+          <select [(ngModel)]="detalle.id_compra">
+            <option value="">-- Seleccionar Orden --</option>
+            <option *ngFor="let c of compras" [value]="c.id_compra">
+              Orden #000{{ c.id_compra }} ({{ obtenerNombreProveedor(c.id_proveedor) }}) - {{ c.total }} Bs
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Seleccionar Material</label>
+          <select [(ngModel)]="detalle.id_material">
+            <option value="">-- Seleccionar Material --</option>
+            <option *ngFor="let m of materiales" [value]="m.id_material">
+              {{ m.nombre }} (Stock actual: {{ m.stock }})
+            </option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cantidad Solicitada</label>
+            <input type="number" [(ngModel)]="detalle.cantidad" placeholder="Cantidad">
+          </div>
+
+          <div class="form-group">
+            <label>Precio Unitario (Bs)</label>
+            <input type="number" [(ngModel)]="detalle.precio" placeholder="Precio">
+          </div>
+        </div>
+
+        <button class="btn-submit" (click)="registrarDetalleCompra()">
+          ➕ Agregar Material a la Orden
+        </button>
+      </div>
+    </div>
+
+    <!-- REGISTRAR PROVEEDOR -->
+    <div class="card form-card">
+      <div class="form-header">
+        <h2>Registrar Proveedor</h2>
+        <p>Agrega distribuidores y contactos oficiales para compras.</p>
+      </div>
+
+      <div class="formulario">
+        <div class="form-group">
+          <label>Nombre / Razón Social</label>
+          <input type="text" [(ngModel)]="proveedor.nombre" placeholder="Ej: Aceros Arequipa S.A.">
+        </div>
+
+        <div class="form-group">
+          <label>Contacto / Teléfono</label>
+          <input type="text" [(ngModel)]="proveedor.contacto" placeholder="Ej: Ing. Pedro - 71234567">
+        </div>
+
+        <button class="btn-submit" (click)="registrarProveedor()">
+          🏢 Guardar Proveedor
+        </button>
+      </div>
+    </div>
+
+    <!-- REGISTRAR MATERIAL -->
+    <div class="card form-card">
+      <div class="form-header">
+        <h2>Registrar Material</h2>
+        <p>Agrega nuevos items del catálogo de almacén.</p>
+      </div>
+
+      <div class="formulario">
+        <div class="form-group">
+          <label>Nombre del Material</label>
+          <input type="text" [(ngModel)]="material.nombre" placeholder="Ej: Cemento Warnes IP-30">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Precio Referencial (Bs)</label>
+            <input type="number" [(ngModel)]="material.precio" placeholder="Precio">
+          </div>
+
+          <div class="form-group">
+            <label>Stock Inicial</label>
+            <input type="number" [(ngModel)]="material.stock" placeholder="Stock">
+          </div>
+        </div>
+
+        <button class="btn-submit" (click)="registrarMaterial()">
+          📦 Guardar Material
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,381 @@
+<div class="activos-container">
+
+  <div class="page-header">
+    <div class="header-text">
+      <h1>📦 Gestión de Activos Fijos</h1>
+      <p class="subtitle">Administración de maquinarias, herramientas y vehículos de obra en tiempo real.</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-primary" (click)="isModalActivoOpen = true">
+        ➕ Registrar Nuevo Activo
+      </button>
+    </div>
+  </div>
+
+  <!-- TABS NAVIGATION -->
+  <div class="tabs-navigation">
+    <button [class.active]="activeTab === 'inventario'" (click)="activeTab = 'inventario'">
+      📋 Inventario y Asignaciones
+    </button>
+    <button [class.active]="activeTab === 'mapa'" (click)="activeTab = 'mapa'">
+      🗺️ Mapa de Ubicación
+    </button>
+    <button [class.active]="activeTab === 'calendario'" (click)="activeTab = 'calendario'">
+      📅 Calendario de Mantenimiento
+    </button>
+    <button [class.active]="activeTab === 'historico'" (click)="activeTab = 'historico'">
+      ⏳ Timeline del Histórico
+    </button>
+  </div>
+
+  <!-- TAB 1: INVENTARIO Y DRAG & DROP -->
+  <div class="tab-content" *ngIf="activeTab === 'inventario'">
+    
+    <div class="filters-bar form-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Buscar Activo</label>
+          <input type="text" [(ngModel)]="filtroTexto" placeholder="Nombre, código o tipo...">
+        </div>
+        <div class="form-group">
+          <label>Filtrar por Estado</label>
+          <select [(ngModel)]="filtroEstado">
+            <option value="">Todos los estados</option>
+            <option value="Disponible">Disponible</option>
+            <option value="Asignado">Asignado</option>
+            <option value="Mantenimiento">Mantenimiento</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="drag-drop-board">
+      
+      <!-- COLUMNA IZQUIERDA: INVENTARIO DE ACTIVOS -->
+      <div class="board-column assets-column card">
+        <h3>Almacén Central (Activos)</h3>
+        <p class="column-desc">Arrastra un activo para asignarlo a un proyecto de obra.</p>
+        
+        <div class="assets-list">
+          <div 
+            *ngFor="let asset of activosFiltrados" 
+            class="asset-draggable-card"
+            [class.assigned]="asset.estado === 'Asignado'"
+            [class.maintenance]="asset.estado === 'Mantenimiento'"
+            [draggable]="asset.estado !== 'Mantenimiento'"
+            (dragstart)="onDragStart($event, asset)"
+          >
+            <div class="card-header-tags">
+              <span class="asset-code">{{ asset.codigo_activo }}</span>
+              <span class="status-badge" [ngClass]="asset.estado.toLowerCase()">{{ asset.estado }}</span>
+            </div>
+            <h4>{{ asset.nombre }}</h4>
+            <p class="asset-type">📁 {{ asset.tipo_activo }}</p>
+            <div class="asset-footer">
+              <span class="asset-project" *ngIf="asset.id_proyecto">📍 {{ obtenerNombreProyecto(asset.id_proyecto) }}</span>
+              <span class="asset-project" *ngIf="!asset.id_proyecto">🏠 En Almacén</span>
+            </div>
+            
+            <div class="card-actions" *ngIf="asset.estado === 'Asignado'">
+              <button class="btn-liberar" (click)="liberarActivo(asset)">
+                🔄 Devolver a Almacén
+              </button>
+            </div>
+          </div>
+          
+          <div class="empty-state" *ngIf="activosFiltrados.length === 0">
+            No se encontraron activos.
+          </div>
+        </div>
+      </div>
+
+      <!-- COLUMNA DERECHA: PROYECTOS / DESTINOS -->
+      <div class="board-column projects-column">
+        <h3>Obras Activas (Destinos de Asignación)</h3>
+        <p class="column-desc">Suelta el activo aquí para vincularlo a la obra.</p>
+
+        <div class="projects-grid">
+          <div 
+            *ngFor="let project of proyectos" 
+            class="project-drop-card card"
+            (dragover)="onDragOver($event)"
+            (drop)="onDrop($event, project)"
+          >
+            <h4>{{ project.nombre }}</h4>
+            <p class="project-location">📍 {{ project.ubicacion }}</p>
+            
+            <div class="project-assigned-assets-section">
+              <h5>Maquinaria en Obra:</h5>
+              <div class="project-assets-list">
+                <ng-container *ngFor="let asset of activos">
+                  <div class="mini-asset-tag" *ngIf="asset.id_proyecto == project.id_proyecto">
+                    ⚙️ {{ asset.nombre }} ({{ asset.codigo_activo }})
+                    <span class="btn-close-mini" (click)="liberarActivo(asset)" title="Devolver a almacén">×</span>
+                  </div>
+                </ng-container>
+                <div class="no-assets-tag" *ngIf="activos.length === 0">
+                  Ningún activo asignado.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- TAB 2: MAPA DE UBICACIÓN -->
+  <div class="tab-content" *ngIf="activeTab === 'mapa'">
+    <div class="avances-split-layout">
+      
+      <!-- Lista de Activos -->
+      <div class="card panel-sidebar">
+        <h3>Selecciona un Activo</h3>
+        <p class="subtitle">Haz click en un activo para ver su ubicación en tiempo real.</p>
+        
+        <div class="asset-selector-list">
+          <div 
+            *ngFor="let asset of activos" 
+            class="selector-item"
+            [class.active]="activoSeleccionadoMapa?.id_activo === asset.id_activo"
+            (click)="seleccionarActivoMapa(asset)"
+          >
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <strong>{{ asset.nombre }}</strong>
+              <span class="status-badge" [ngClass]="asset.estado.toLowerCase()">{{ asset.estado }}</span>
+            </div>
+            <span class="subtext">{{ asset.codigo_activo }} | {{ asset.tipo_activo }}</span>
+            <span class="subtext assignment" *ngIf="asset.id_proyecto">📍 Obra: {{ obtenerNombreProyecto(asset.id_proyecto) }}</span>
+            <span class="subtext assignment" *ngIf="!asset.id_proyecto">🏠 En Almacén Central</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mapa Embebido -->
+      <div class="card map-container-card">
+        <h3>Ubicación GPS del Activo</h3>
+        <p class="subtitle" *ngIf="activoSeleccionadoMapa">
+          Coordenadas simuladas para: <strong>{{ activoSeleccionadoMapa.nombre }}</strong>
+        </p>
+
+        <div class="map-wrapper" *ngIf="mapUrl">
+          <iframe 
+            [src]="mapUrl" 
+            width="100%" 
+            height="100%" 
+            style="border:0;" 
+            allowfullscreen="" 
+            loading="lazy"
+          ></iframe>
+        </div>
+
+        <div class="no-map-placeholder" *ngIf="!mapUrl">
+          Selecciona un activo para geolocalizarlo en el mapa.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TAB 3: CALENDARIO DE MANTENIMIENTO -->
+  <div class="tab-content" *ngIf="activeTab === 'calendario'">
+    
+    <div class="calendar-card card">
+      
+      <div class="calendar-header">
+        <button class="btn-nav-cal" (click)="mesAnterior()">◀ Anterior</button>
+        <h2>{{ mesNombre }}</h2>
+        <button class="btn-nav-cal" (click)="mesSiguiente()">Siguiente ▶</button>
+      </div>
+
+      <div class="calendar-grid-header">
+        <div>Dom</div>
+        <div>Lun</div>
+        <div>Mar</div>
+        <div>Mié</div>
+        <div>Jue</div>
+        <div>Vie</div>
+        <div>Sáb</div>
+      </div>
+
+      <div class="calendar-grid-body">
+        <div 
+          *ngFor="let celda of diasCalendario" 
+          class="calendar-day-cell"
+          [class.empty-cell]="!celda.dia"
+        >
+          <div class="day-number-row" *ngIf="celda.dia">
+            <span>{{ celda.dia }}</span>
+            <button class="btn-add-maint" (click)="abrirProgramarMantenimiento(celda.fechaStr)" title="Programar Mantenimiento">+</button>
+          </div>
+          
+          <div class="day-events-list" *ngIf="celda.dia">
+            <div 
+              *ngFor="let ev of celda.eventos" 
+              class="event-tag"
+              [class.preventivo]="ev.tipo === 'Preventivo'"
+              [class.correctivo]="ev.tipo === 'Correctivo'"
+              [title]="ev.descripcion"
+            >
+              🛠️ <strong>{{ ev.nombreActivo }}</strong>: {{ ev.tipo }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- TAB 4: TIMELINE DEL HISTÓRICO -->
+  <div class="tab-content" *ngIf="activeTab === 'historico'">
+    <div class="avances-split-layout">
+      
+      <!-- Lista de Activos -->
+      <div class="card panel-sidebar">
+        <h3>Historial de Activos</h3>
+        <p class="subtitle">Selecciona un activo fijo para auditar sus movimientos.</p>
+        
+        <div class="asset-selector-list">
+          <div 
+            *ngFor="let asset of activos" 
+            class="selector-item"
+            [class.active]="activoSeleccionadoHistorial?.id_activo === asset.id_activo"
+            (click)="seleccionarActivoHistorial(asset)"
+          >
+            <strong>{{ asset.nombre }}</strong>
+            <span class="subtext">{{ asset.codigo_activo }} | {{ asset.tipo_activo }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Línea de Tiempo -->
+      <div class="card timeline-container-card">
+        <h3>Historial de Operaciones: {{ activoSeleccionadoHistorial?.nombre || 'Ninguno seleccionado' }}</h3>
+        <p class="subtitle" *ngIf="activoSeleccionadoHistorial">Código: {{ activoSeleccionadoHistorial.codigo_activo }}</p>
+        
+        <div class="vertical-timeline" *ngIf="historialFiltrado.length > 0">
+          <div class="timeline-node" *ngFor="let h of historialFiltrado">
+            <div class="node-icon" [ngClass]="h.accion.toLowerCase()"></div>
+            <div class="node-content card">
+              <div class="node-header">
+                <span class="node-action" [ngClass]="h.accion.toLowerCase()">{{ h.accion }}</span>
+                <span class="node-date">📅 {{ h.fecha }}</span>
+              </div>
+              <p class="node-desc">{{ h.detalles }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="no-history-placeholder" *ngIf="historialFiltrado.length === 0">
+          No hay registros históricos registrados para este activo.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL: REGISTRAR ACTIVO -->
+  <div class="modal-overlay" *ngIf="isModalActivoOpen">
+    <div class="modal-card card">
+      <div class="modal-header">
+        <h2>Registrar Nuevo Activo Fijo</h2>
+        <button class="btn-close-modal" (click)="isModalActivoOpen = false">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Nombre del Activo</label>
+          <input type="text" [(ngModel)]="nuevoActivo.nombre" placeholder="Ej: Excavadora Caterpillar 320">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tipo de Activo</label>
+            <select [(ngModel)]="nuevoActivo.tipo_activo">
+              <option value="Maquinaria Pesada">Maquinaria Pesada</option>
+              <option value="Herramienta de Obra">Herramienta de Obra</option>
+              <option value="Vehículo">Vehículo</option>
+              <option value="Equipo Tecnológico">Equipo Tecnológico</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Código de Activo</label>
+            <input type="text" [(ngModel)]="nuevoActivo.codigo_activo" placeholder="Ej: MP-Excavadora01">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fecha de Adquisición</label>
+            <input type="date" [(ngModel)]="nuevoActivo.fechacompra">
+          </div>
+          <div class="form-group">
+            <label>Costo de Compra (Bs)</label>
+            <input type="number" [(ngModel)]="nuevoActivo.valor_compra">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Vida Útil (Años)</label>
+            <input type="number" [(ngModel)]="nuevoActivo.vida_util">
+          </div>
+          <div class="form-group">
+            <label>Valor Residual (Bs)</label>
+            <input type="number" [(ngModel)]="nuevoActivo.valor_residual">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="isModalActivoOpen = false">Cancelar</button>
+        <button class="btn-primary" (click)="crearActivo()">Guardar Activo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PROGRAMAR MANTENIMIENTO -->
+  <div class="modal-overlay" *ngIf="isModalMantenimientoOpen">
+    <div class="modal-card card">
+      <div class="modal-header">
+        <h2>Programar Mantenimiento de Activo</h2>
+        <button class="btn-close-modal" (click)="isModalMantenimientoOpen = false">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Fecha Programada</label>
+          <input type="date" [(ngModel)]="nuevoMantenimiento.fecha" readonly>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Seleccionar Activo Fijo</label>
+            <select [(ngModel)]="nuevoMantenimiento.id_activo">
+              <option value="">-- Seleccionar --</option>
+              <option *ngFor="let asset of activos" [value]="asset.id_activo">
+                {{ asset.nombre }} ({{ asset.codigo_activo }})
+              </option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Mantenimiento</label>
+            <select [(ngModel)]="nuevoMantenimiento.tipo">
+              <option value="Preventivo">Preventivo (Filtros, lubricación)</option>
+              <option value="Correctivo">Correctivo (Reparación de fallas)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Costo Estimado (Bs)</label>
+          <input type="number" [(ngModel)]="nuevoMantenimiento.costo">
+        </div>
+        <div class="form-group">
+          <label>Descripción del Trabajo</label>
+          <textarea [(ngModel)]="nuevoMantenimiento.descripcion" placeholder="Detalle los trabajos a realizar..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="isModalMantenimientoOpen = false">Cancelar</button>
+        <button class="btn-primary" (click)="programarMantenimiento()">Programar</button>
+      </div>
+    </div>
+  </div>
+
+</div>

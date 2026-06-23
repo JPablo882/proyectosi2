@@ -1,0 +1,216 @@
+<div class="dashboard-home-wrapper">
+
+  <!-- BIENVENIDA & SUMMARY BANNER -->
+  <div class="welcome-banner">
+    <div class="banner-content">
+      <h1>Panel de {{ nombreEmpresa || 'Mi Constructora' }}</h1>
+      <p class="banner-subtitle">Gestión Multi-Tenant de Obras, Presupuestos y Finanzas en Tiempo Real</p>
+      
+      <div class="banner-metrics">
+        <div class="banner-metric-item">
+          <span class="label">Balance Neto</span>
+          <span class="value" [class.positive]="balanceNeto >= 0" [class.negative]="balanceNeto < 0">
+            {{ balanceNeto >= 0 ? '+' : '' }}{{ balanceNeto | number:'1.2-2' }} Bs
+          </span>
+        </div>
+        <div class="banner-metric-divider"></div>
+        <div class="banner-metric-item">
+          <span class="label">Estado de Operaciones</span>
+          <span class="status-badge active">Activo</span>
+        </div>
+      </div>
+    </div>
+    <div class="banner-graphic">
+      <div class="blueprint-bg"></div>
+    </div>
+  </div>
+
+  <!-- STATS CARDS GRID -->
+  <div class="stats-grid">
+
+    <!-- GANANCIAS CARD -->
+    <div class="stat-card card-ganancias">
+      <div class="card-header">
+        <div class="icon-container green">
+          <span class="icon">📈</span>
+        </div>
+        <span class="trend positive">▲ +12%</span>
+      </div>
+      <div class="card-body">
+        <h2>{{ totalVentas | number:'1.2-2' }} Bs</h2>
+        <p>Ganancias Totales</p>
+      </div>
+    </div>
+
+    <!-- PERDIDAS CARD -->
+    <div class="stat-card card-perdidas">
+      <div class="card-header">
+        <div class="icon-container red">
+          <span class="icon">📉</span>
+        </div>
+        <span class="trend negative">▼ -4%</span>
+      </div>
+      <div class="card-body">
+        <h2>{{ totalPerdidas | number:'1.2-2' }} Bs</h2>
+        <p>Pérdidas (Compras)</p>
+      </div>
+    </div>
+
+    <!-- OBRAS CARD -->
+    <div class="stat-card card-obras">
+      <div class="card-header">
+        <div class="icon-container blue">
+          <span class="icon">🏗️</span>
+        </div>
+        <span class="trend neutral">Estable</span>
+      </div>
+      <div class="card-body">
+        <h2>{{ cantObras }}</h2>
+        <p>Obras Activas</p>
+      </div>
+    </div>
+
+    <!-- CLIENTES CARD -->
+    <div class="stat-card card-clientes">
+      <div class="card-header">
+        <div class="icon-container purple">
+          <span class="icon">👥</span>
+        </div>
+        <span class="trend positive">Nuevo</span>
+      </div>
+      <div class="card-body">
+        <h2>{{ cantClientes }}</h2>
+        <p>Clientes Activos</p>
+      </div>
+    </div>
+
+    <!-- INVENTARIO CARD -->
+    <div class="stat-card card-inventario">
+      <div class="card-header">
+        <div class="icon-container orange">
+          <span class="icon">📦</span>
+        </div>
+        <span class="trend info">Valorizado</span>
+      </div>
+      <div class="card-body">
+        <h2>{{ valorInventario | number:'1.2-2' }} Bs</h2>
+        <p>Valor de Inventario</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CHARTS CONTAINER -->
+  <div class="charts-container">
+
+    <!-- LINE CHART (GANANCIAS VS PERDIDAS) -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Historial Financiero</h3>
+        <p>Comparativa de ganancias vs pérdidas (últimos 6 meses)</p>
+      </div>
+      <div class="chart-wrapper">
+        <canvas
+          baseChart
+          [data]="lineChartData"
+          [options]="lineChartOptions"
+          [type]="lineChartType">
+        </canvas>
+      </div>
+    </div>
+
+    <!-- PIE CHART (PROYECTOS POR ESTADO) -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Distribución de Obras</h3>
+        <p>Estado actual de los proyectos en ejecución</p>
+      </div>
+      <div class="chart-wrapper">
+        <canvas
+          baseChart
+          [data]="pieChartData"
+          [options]="pieChartOptions"
+          [type]="pieChartType">
+        </canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DETAILS GRID SECTION -->
+  <div class="details-grid">
+
+    <!-- RECENT PROJECTS TABLE -->
+    <div class="details-card">
+      <div class="details-header">
+        <h3>Obras Recientes</h3>
+        <p>Lista rápida de proyectos en ejecución</p>
+      </div>
+      <div class="table-mini-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Proyecto</th>
+              <th>Ubicación</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of ultimasObras">
+              <td class="bold-text">{{ p.nombre }}</td>
+              <td>{{ p.ubicacion }}</td>
+              <td>
+                <span class="badge-status" 
+                      [class.plan]="p.estado === 'Planificación' || p.estado === 'En planificación' || p.estado_proyecto === 'En planificación'"
+                      [class.const]="p.estado === 'En construcción' || p.estado_proyecto === 'En construcción'"
+                      [class.done]="p.estado === 'Finalizado' || p.estado_proyecto === 'Finalizado'">
+                  {{ p.estado || p.estado_proyecto || 'Pendiente' }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="ultimasObras.length === 0">
+              <td colspan="3" class="empty-table">No hay obras registradas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- INVENTORY STATUS TABLE -->
+    <div class="details-card">
+      <div class="details-header">
+        <h3>Estado de Inventario</h3>
+        <p>Materiales y niveles de stock en almacén</p>
+      </div>
+      <div class="table-mini-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Material</th>
+              <th>Stock</th>
+              <th>Precio Unit.</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of materialesStock">
+              <td class="bold-text">{{ m.nombre }}</td>
+              <td>{{ m.stock }} uds</td>
+              <td>{{ m.precio | number:'1.2-2' }} Bs</td>
+              <td>
+                <span class="badge-stock" [class.low-stock]="m.stock < 50" [class.normal-stock]="m.stock >= 50">
+                  {{ m.stock < 50 ? 'Stock Bajo' : 'Disponible' }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="materialesStock.length === 0">
+              <td colspan="4" class="empty-table">No hay materiales en inventario.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+</div>

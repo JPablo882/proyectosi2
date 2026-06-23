@@ -1,0 +1,83 @@
+<div class="chatbot-container">
+
+  <div class="chat-card">
+
+    <div class="chat-header">
+      <h1>🤖 Asistente IA ConstructPro</h1>
+      <p class="chat-subtitle">Pregunta sobre tus proyectos, materiales, presupuestos, empleados, compras e ingresos</p>
+    </div>
+
+    <div class="chat-box" #chatBox>
+
+      <div
+        *ngFor="let m of mensajes"
+        class="mensaje"
+        [ngClass]="m.tipo"
+        [innerHTML]="convertirMarkdown(m.texto)"
+      >
+      </div>
+
+      <div
+        *ngIf="cargando"
+        class="mensaje ia typing-indicator"
+      >
+        <span></span><span></span><span></span>
+      </div>
+
+    </div>
+
+    <div class="input-area">
+
+      <!-- Campo de texto (oculto al grabar) -->
+      <input
+        *ngIf="!grabando"
+        type="text"
+        [(ngModel)]="pregunta"
+        placeholder="Escribe tu pregunta..."
+        (keyup.enter)="enviarPregunta()"
+        [disabled]="cargando"
+        class="chat-input"
+      >
+
+      <!-- Barra de estado de grabación (mostrada solo al grabar) -->
+      <div class="recording-status-bar" *ngIf="grabando">
+        <span class="pulsating-dot"></span>
+        <span class="recording-text">Grabando audio...</span>
+        <span class="recording-timer">{{ tiempoFormateado }}</span>
+      </div>
+
+      <!-- Botón de enviar (oculto al grabar) -->
+      <button
+        *ngIf="!grabando"
+        class="btn-send"
+        (click)="enviarPregunta()"
+        [disabled]="cargando"
+      >
+        Enviar
+      </button>
+      
+      <!-- Botón de grabar (oculto al grabar) -->
+      <button 
+        *ngIf="!grabando"
+        class="btn-record"
+        (click)="iniciarGrabacion()" 
+        [disabled]="cargando"
+      >
+        🎤 Grabar
+      </button>
+
+      <!-- Botón de detener (mostrado solo al grabar) -->
+      <button 
+        *ngIf="grabando"
+        class="btn-stop"
+        (click)="detenerGrabacion()" 
+        [disabled]="cargando"
+      >
+        ⏹️ Detener y Enviar
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

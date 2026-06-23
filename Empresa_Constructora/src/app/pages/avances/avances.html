@@ -1,0 +1,168 @@
+<div class="avances-page-container">
+
+  <h1>📈 Registro de Avances</h1>
+  <p class="subtitle">Control y seguimiento del avance de obras y proyectos de construcción</p>
+
+  <!-- SPLIT LAYOUT FOR FORM & MAP -->
+  <div class="avances-split-layout">
+    
+    <!-- FORMULARIO DE REGISTRO -->
+    <div class="form-card">
+      <div class="form-header">
+        <h2>Registrar Nuevo Avance</h2>
+        <p>Complete los datos para documentar la evolución de la obra</p>
+      </div>
+
+      <div class="formulario">
+
+        <div class="form-group">
+          <label>Proyecto Asociado</label>
+          <select [(ngModel)]="avance.id_proyecto" (change)="actualizarMapa()">
+            <option value="">-- Seleccionar Proyecto --</option>
+            <option *ngFor="let proyecto of proyectos" [value]="proyecto.id_proyecto">
+              {{ proyecto.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Título del Avance</label>
+          <input type="text" placeholder="Ej. Vaciado de columnas del 2do piso" [(ngModel)]="avance.titulo">
+        </div>
+
+        <div class="form-group">
+          <label>Descripción Detallada</label>
+          <textarea placeholder="Describa el trabajo realizado, materiales usados o hitos alcanzados..." rows="3" [(ngModel)]="avance.descripcion"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Responsable de Obra</label>
+          <input type="text" placeholder="Ej. Ing. Carlos Rojas" [(ngModel)]="avance.responsable">
+        </div>
+
+        <div class="form-group range-group">
+          <label class="range-label">
+            <span>Porcentaje de Avance</span>
+            <span class="range-value">{{ avance.porcentaje_avance }}%</span>
+          </label>
+          <input type="range" min="0" max="100" [(ngModel)]="avance.porcentaje_avance" class="modern-slider">
+        </div>
+
+        <button (click)="registrarAvance()" class="btn-submit">
+          🚀 Registrar Avance
+        </button>
+
+      </div>
+    </div>
+
+    <!-- MAP CARD -->
+    <div class="map-card">
+      <div class="map-header">
+        <h2>Ubicación de la Obra</h2>
+        <p>Mapa interactivo de la localización del proyecto seleccionado</p>
+      </div>
+      <div class="map-container">
+        <iframe 
+          *ngIf="urlMapa" 
+          [src]="urlMapa" 
+          width="100%" 
+          height="100%" 
+          style="border:0;" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SECCIÓN DE FOTOS Y PLANOS DEL PROYECTO SELECCIONADO -->
+  <div class="proyecto-adjuntos-section" *ngIf="avance.id_proyecto && (fotosProyecto.length > 0 || planosProyecto.length > 0)">
+    <div class="adjuntos-card">
+      <div class="card-header">
+        <h2>Archivos Guardados del Proyecto</h2>
+        <p>Fotos de avance de obra y planos arquitectónicos cargados por el cliente</p>
+      </div>
+      
+      <div class="adjuntos-content-grid">
+        <!-- FOTOS DE AVANCE -->
+        <div class="fotos-panel" *ngIf="fotosProyecto.length > 0">
+          <h3>🖼️ Fotos de Avance de Obra</h3>
+          <div class="fotos-slider">
+            <div class="foto-item" *ngFor="let foto of fotosProyecto">
+              <img [src]="completarRutaUrl(foto)" alt="Foto de Avance" (click)="verFotoCompleta(foto)">
+            </div>
+          </div>
+        </div>
+
+        <!-- PLANOS Y DOCUMENTOS -->
+        <div class="planos-panel" *ngIf="planosProyecto.length > 0">
+          <h3>📐 Planos y Renders</h3>
+          <div class="planos-list">
+            <div class="plano-item-card" *ngFor="let doc of planosProyecto">
+              <div class="plano-info">
+                <span class="plano-format-badge" [class]="doc.formato?.toLowerCase()">{{ doc.formato | uppercase }}</span>
+                <div class="plano-details">
+                  <span class="plano-name">{{ doc.nombre }}</span>
+                  <span class="plano-meta">Subido: {{ doc.fecha_subida | date:'dd/MM/yyyy' }} • {{ doc.tamano }}</span>
+                </div>
+              </div>
+              <div class="plano-actions">
+                <a [href]="completarRutaUrl(doc.archivo_url)" target="_blank" class="btn-plano-action view-btn">👁️ Ver Plano</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VENTANA MODAL PARA VER FOTO EN GRANDE -->
+    <div class="modal-viewer" *ngIf="fotoModalUrl" (click)="cerrarFotoModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <img [src]="completarRutaUrl(fotoModalUrl)" alt="Vista ampliada">
+        <button class="close-btn" (click)="cerrarFotoModal()">×</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- HISTORIAL DE AVANCES -->
+  <div class="history-section">
+    <h2>Historial de Avances</h2>
+    <p class="subtitle">Registro histórico de todas las actualizaciones subidas</p>
+
+    <div class="avances-grid">
+      <div class="avance-card" *ngFor="let item of avances">
+        <div class="card-top">
+          <span class="project-tag">{{ obtenerNombreProyecto(item.id_proyecto) }}</span>
+          <span class="date-tag">📅 {{ item.fecha_avance || '-' }}</span>
+        </div>
+
+        <h3 class="card-title">{{ item.titulo }}</h3>
+        <p class="card-desc">{{ item.descripcion || 'Sin descripción detallada.' }}</p>
+
+        <div class="card-meta">
+          <span>Responsable:</span>
+          <strong>👤 {{ item.responsable || 'No asignado' }}</strong>
+        </div>
+
+        <div class="progress-section">
+          <div class="progress-info">
+            <span>Avance general de la obra</span>
+            <span class="progress-val">{{ item.porcentaje_avance }}%</span>
+          </div>
+          <div class="barra-progreso-bg">
+            <div class="barra-progreso-fill" [style.width.%]="item.porcentaje_avance"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-avances" *ngIf="avances.length === 0">
+        📭 No hay avances registrados aún para esta empresa.
+      </div>
+    </div>
+  </div>
+
+</div>

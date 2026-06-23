@@ -1,0 +1,3 @@
+[tool.pyrefly]
+python-interpreter-path = "C:/Users/dilex/Desktop/GrupoSI2/backend/venv/Scripts/python.exe"
+site-package-path = ["C:/Users/dilex/Desktop/GrupoSI2/backend/venv/Lib/site-packages"]

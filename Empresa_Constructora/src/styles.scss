@@ -1,0 +1,562 @@
+/* Global Styles and Dark Mode Theme */
+
+body.dark-mode {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+
+  /* Dashboard layouts */
+  .dashboard-container {
+    background-color: #0f172a !important;
+  }
+
+  .main-content {
+    background-color: #0f172a !important;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    background: #020617 !important;
+    border-right: 1px solid #1e293b !important;
+
+    .logo p {
+      color: #94a3b8 !important;
+    }
+
+    li:hover {
+      background: #1e3a8a !important;
+    }
+
+    .active {
+      background: #2563eb !important;
+    }
+    
+    .logout {
+      border-top-color: rgba(255, 255, 255, 0.1) !important;
+    }
+  }
+
+  /* Header */
+  .dashboard-header {
+    border-bottom-color: #1e293b !important;
+    
+    .welcome-text {
+      color: #ffffff !important;
+    }
+  }
+
+  .theme-toggle-btn,
+  .notification-bell {
+    background-color: #1e293b !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1) !important;
+
+    &:hover {
+      background-color: #334155 !important;
+    }
+  }
+
+  .notifications-panel {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4) !important;
+
+    .panel-header {
+      border-bottom-color: #334155 !important;
+      
+      h4 {
+        color: #ffffff !important;
+      }
+      .mark-read-btn {
+        color: #60a5fa !important;
+        &:hover {
+          color: #93c5fd !important;
+        }
+      }
+    }
+
+    .panel-body {
+      .notification-item {
+        border-bottom-color: #1e293b !important;
+        
+        &:hover {
+          background-color: #334155 !important;
+        }
+
+        &.unread {
+          background-color: #172554 !important; /* dark blue */
+          
+          &:hover {
+            background-color: #1e3a8a !important;
+          }
+        }
+
+        .note-content {
+          .note-text {
+            color: #e2e8f0 !important;
+          }
+          .note-time {
+            color: #64748b !important;
+          }
+        }
+      }
+      .no-notifications {
+        color: #94a3b8 !important;
+      }
+    }
+  }
+
+  /* Cards (Stat Cards, Charts, Forms, Documents, and page panels) */
+  .card,
+  .stat-card,
+  .chart-card,
+  .form-card,
+  .document-card,
+  .map-card,
+  .modal-card,
+  .details-card,
+  .tabla-clientes,
+  .tabla-proyectos,
+  .resultado-card,
+  .adjuntos-card,
+  .avance-card,
+  .no-avances,
+  .no-documents,
+  .plano-item-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3) !important;
+
+    .form-header {
+      border-bottom-color: #334155 !important;
+      
+      h2 {
+        color: #ffffff !important;
+      }
+      p {
+        color: #94a3b8 !important;
+      }
+    }
+
+    /* Details divider */
+    .document-details {
+      border-top-color: #334155 !important;
+      
+      .detail-row {
+        .label {
+          color: #94a3b8 !important;
+        }
+        .value {
+          color: #ffffff !important;
+        }
+      }
+    }
+
+    .acciones-panel {
+      border-top-color: #334155 !important;
+      
+      .view-btn {
+        background-color: #1e3a8a !important;
+        color: #93c5fd !important;
+        &:hover {
+          background-color: #2563eb !important;
+        }
+      }
+      .download-btn {
+        background-color: #064e3b !important;
+        color: #6ee7b7 !important;
+        &:hover {
+          background-color: #047857 !important;
+        }
+      }
+      .delete-btn {
+        background-color: #7f1d1d !important;
+        color: #fca5a5 !important;
+        &:hover {
+          background-color: #b91c1c !important;
+        }
+      }
+    }
+  }
+
+  /* Specific Section headers and subtext overrides inside cards */
+  .details-header, .history-header, .card-header, .chart-header, .map-header {
+    h2, h3 {
+      color: #ffffff !important;
+    }
+    p {
+      color: #94a3b8 !important;
+    }
+  }
+
+  /* Bold table cells */
+  .bold-text, td.bold-text {
+    color: #ffffff !important;
+  }
+
+  /* Plano details card inside progress */
+  .plano-details {
+    .plano-name {
+      color: #ffffff !important;
+    }
+    .plano-meta {
+      color: #94a3b8 !important;
+    }
+  }
+
+  /* Plano and format buttons */
+  .btn-plano-action.view-btn {
+    background-color: #1e3a8a !important;
+    color: #93c5fd !important;
+    border-color: #334155 !important;
+    &:hover {
+      background-color: #2563eb !important;
+      color: #ffffff !important;
+    }
+  }
+
+  /* Status and Stock Badges in Dark Mode */
+  .badge-status, .status-pill {
+    &.plan, &.planificación, &.planificacion {
+      background-color: rgba(217, 119, 6, 0.15) !important;
+      color: #fbbf24 !important;
+    }
+    &.const, &.construcción, &.construccion {
+      background-color: rgba(37, 99, 235, 0.15) !important;
+      color: #60a5fa !important;
+    }
+    &.done, &.finalizado {
+      background-color: rgba(16, 185, 129, 0.15) !important;
+      color: #34d399 !important;
+    }
+  }
+
+  .badge-stock {
+    &.low-stock {
+      background-color: rgba(239, 68, 68, 0.15) !important;
+      color: #f87171 !important;
+    }
+    &.normal-stock {
+      background-color: rgba(22, 163, 74, 0.15) !important;
+      color: #4ade80 !important;
+    }
+  }
+
+  /* Document format badges */
+  .format-badge, .plano-format-badge {
+    background-color: #334155 !important;
+    color: #cbd5e1 !important;
+
+    &.pdf, &[data-format="PDF"] {
+      background-color: rgba(239, 68, 68, 0.15) !important;
+      color: #f87171 !important;
+    }
+    &.dwg, &.dxf, &[data-format="DWG"], &[data-format="DXF"] {
+      background-color: rgba(217, 119, 6, 0.15) !important;
+      color: #fbbf24 !important;
+    }
+    &.xls, &.xlsx, &[data-format="XLS"], &[data-format="XLSX"] {
+      background-color: rgba(22, 163, 74, 0.15) !important;
+      color: #4ade80 !important;
+    }
+    &.doc, &.docx {
+      background-color: rgba(37, 99, 235, 0.15) !important;
+      color: #60a5fa !important;
+    }
+  }
+
+  /* Modals: override inline style bindings */
+  .modal-card {
+    h4 {
+      color: #cbd5e1 !important;
+    }
+    label {
+      color: #cbd5e1 !important;
+    }
+    select, .modal-select {
+      background-color: #0f172a !important;
+      color: #ffffff !important;
+      border-color: #334155 !important;
+    }
+    span {
+      color: #cbd5e1 !important;
+    }
+    div[style*="background: #fff"], 
+    div[style*="background:#fff"], 
+    div[style*="background: white"],
+    div[style*="background-color: #fff"],
+    div[style*="background-color:#fff"] {
+      background: #0f172a !important;
+      background-color: #0f172a !important;
+      border-color: #334155 !important;
+    }
+    
+    .btn-cancel[style*="background-color: #fff"],
+    .btn-cancel[style*="background-color:#fff"] {
+      background-color: transparent !important;
+      background: transparent !important;
+      color: #cbd5e1 !important;
+      border: 1px solid #475569 !important;
+      
+      &:hover {
+        background-color: #334155 !important;
+        background: #334155 !important;
+      }
+    }
+  }
+
+  /* Range sliders track */
+  .modern-slider {
+    background: #334155 !important;
+  }
+
+  /* General Text */
+  h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+  }
+
+  p, span, label, th, td, li, div {
+    /* Prevent overriding colors of buttons and badges */
+    &:not(.btn-submit):not(.btn-cancel):not(.btn-primary):not(.btn-secondary):not(.btn-login):not(.btn-back):not(.format-badge):not(.project-tag):not(.bell-badge):not(.step):not(.status-badge):not(.status-pill):not(.badge-status):not(.badge-stock):not(.node-action) {
+      color: #cbd5e1;
+    }
+  }
+
+  .subtitle {
+    color: #94a3b8 !important;
+  }
+
+  .stat-card p {
+    color: #94a3b8 !important;
+  }
+
+  /* Inputs, selects, and textareas */
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="password"],
+  input[type="date"],
+  select,
+  textarea {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #ffffff !important;
+
+    &:focus {
+      border-color: #3b82f6 !important;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25) !important;
+    }
+
+    &::placeholder {
+      color: #4b5563 !important;
+    }
+    
+    option {
+      background-color: #0f172a !important;
+      color: #ffffff !important;
+    }
+  }
+  
+  /* Select dropdowns inside tables and lists */
+  table select {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    
+    option {
+      background-color: #0f172a !important;
+      color: #ffffff !important;
+    }
+  }
+
+  /* Disabled inputs */
+  input:disabled,
+  select:disabled,
+  textarea:disabled {
+    background-color: #1e293b !important;
+    color: #64748b !important;
+    border-color: #334155 !important;
+  }
+
+  /* File uploader dashed area */
+  .file-group .file-uploader {
+    border-color: #475569 !important;
+    background: #0f172a !important;
+    color: #cbd5e1 !important;
+
+    &:hover {
+      background: #1e293b !important;
+      border-color: #64748b !important;
+    }
+
+    input[type="file"] {
+      color: #94a3b8 !important;
+    }
+  }
+
+  /* Tables */
+  table {
+    background: #1e293b !important;
+    color: #cbd5e1 !important;
+    border-color: #334155 !important;
+  }
+
+  tr {
+    border-bottom-color: #334155 !important;
+    background: #1e293b !important;
+
+    &:hover {
+      background-color: #273549 !important;
+    }
+  }
+
+  th {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border-color: #334155 !important;
+  }
+
+  td {
+    color: #cbd5e1 !important;
+    border-bottom-color: #334155 !important;
+  }
+
+  /* Sticky table headers in scrolls */
+  .table-scroll-container thead th {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+  }
+  
+  .table-scroll-container {
+    border-color: #334155 !important;
+    background: #1e293b !important;
+
+    &::-webkit-scrollbar-track {
+      background: #1e293b !important;
+      border-left: 1px solid #334155 !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #475569 0%, #334155 100%) !important;
+      border-color: #1e293b !important;
+
+      &:hover {
+        background: linear-gradient(180deg, #64748b 0%, #475569 100%) !important;
+      }
+    }
+
+    &::-webkit-scrollbar-button:single-button:vertical:decrement {
+      background-color: #1e293b !important;
+      border-left: 1px solid #334155 !important;
+      border-bottom: 1px solid #334155 !important;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2394a3b8"><path d="M7 14l5-5 5 5H7z"/></svg>') !important;
+      background-size: 10px !important;
+      background-repeat: no-repeat !important;
+      background-position: center !important;
+    }
+
+    &::-webkit-scrollbar-button:single-button:vertical:increment {
+      background-color: #1e293b !important;
+      border-left: 1px solid #334155 !important;
+      border-top: 1px solid #334155 !important;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2394a3b8"><path d="M7 10l5 5 5-5H7z"/></svg>') !important;
+      background-size: 10px !important;
+      background-repeat: no-repeat !important;
+      background-position: center !important;
+    }
+  }
+
+  /* Custom tags */
+  .project-tag {
+    background-color: #1e3a8a !important;
+    color: #93c5fd !important;
+  }
+
+  /* Modals */
+  .modal-overlay {
+    background-color: rgba(0, 0, 0, 0.75) !important;
+  }
+
+  /* Inactive cancel buttons */
+  .btn-cancel,
+  .btn-back {
+    background: transparent !important;
+    color: #cbd5e1 !important;
+    border: 1px solid #475569 !important;
+
+    &:hover {
+      background: #334155 !important;
+      color: #ffffff !important;
+    }
+  }
+
+  /* Chatbot watermark opacity decrease for dark mode */
+  .chat-box {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+
+    &::before {
+      opacity: 0.06 !important; /* Less opacity in dark theme for chat watermark */
+    }
+
+    .mensaje.ia {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+      border-color: #334155 !important;
+    }
+    
+    .typing-indicator {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #131b2e !important;
+      border-left: 1px solid #334155 !important;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #1e293b 0%, #334155 100%) !important;
+      border-color: #131b2e !important;
+    }
+    &::-webkit-scrollbar-button:single-button:vertical:decrement,
+    &::-webkit-scrollbar-button:single-button:vertical:increment {
+      background-color: #1e293b !important;
+      border-left-color: #334155 !important;
+      border-bottom-color: #334155 !important;
+      border-top-color: #334155 !important;
+    }
+  }
+  
+  .chat-card {
+    background: #1e293b !important;
+    border-color: #334155 !important;
+  }
+
+  .recording-status-bar {
+    background: rgba(239, 68, 68, 0.15) !important;
+    border-color: rgba(239, 68, 68, 0.4) !important;
+    
+    .recording-text, .recording-timer {
+      color: #f87171 !important;
+    }
+  }
+
+  .cargos-sugeridos-container {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+    
+    .sugeridos-label {
+      color: #cbd5e1 !important;
+    }
+  }
+
+  .cargo-badge {
+    background-color: #1e293b !important;
+    border-color: #334155 !important;
+    color: #cbd5e1 !important;
+
+    &:hover {
+      background-color: #ff7043 !important;
+      color: #ffffff !important;
+      border-color: #ff7043 !important;
+      box-shadow: 0 4px 6px rgba(255, 112, 67, 0.2) !important;
+    }
+  }
+}

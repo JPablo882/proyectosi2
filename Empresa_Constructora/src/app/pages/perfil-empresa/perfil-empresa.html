@@ -1,0 +1,121 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h2 class="title-large">Mi Perfil</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-layout">
+    <!-- Left Column: Profile Card -->
+    <div class="profile-left">
+      <div class="card profile-card">
+        <div class="card-header">
+          <h3>Detalles de la Empresa</h3>
+        </div>
+        <div class="card-body text-center">
+          <div class="profile-avatar-container">
+            <input type="file" id="logoFileInput" accept="image/png, image/jpeg" (change)="onFileSelected($event)" style="display: none;">
+            
+            <!-- Mostrar imagen si existe, de lo contrario iniciales -->
+            <div class="profile-avatar clickable-avatar" *ngIf="!logoUrl" (click)="openFullImage()">
+              <span class="avatar-initial">{{ (empresa?.nombre_empresa || 'E').charAt(0) }}</span>
+            </div>
+            
+            <img [src]="logoUrl" *ngIf="logoUrl" class="profile-avatar-img clickable-avatar" alt="Logo de la Empresa" (click)="openFullImage()">
+
+            <button class="btn-change-image" (click)="triggerFileInput()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              Cambiar logo
+            </button>
+          </div>
+          <h2 class="profile-name">{{ empresa?.nombre_empresa || 'Nombre no definido' }}</h2>
+          <div class="profile-info-list">
+            <div class="info-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+              <span><strong>Registrado:</strong> {{ empresa?.fecha_registro ? (empresa.fecha_registro | date:'yyyy') : '2026' }}</span>
+            </div>
+            <div class="info-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+              <span>{{ empresa?.email || 'N/A' }}</span>
+            </div>
+            <div class="info-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              <span>{{ empresa?.telefono_empresa || 'N/A' }}</span>
+            </div>
+            <div class="info-row">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              <span><strong>ID de Empresa:</strong> {{ empresa?.id_empresa || 'N/A' }}</span>
+            </div>
+          </div>
+          
+          <div class="profile-about text-left mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-2" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <h4 style="margin: 0;">Sobre la Empresa</h4>
+              <button *ngIf="!isEditingDescription" class="btn-action" (click)="editDescription()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+              </button>
+            </div>
+            
+            <div *ngIf="!isEditingDescription">
+              <p>{{ empresa?.descripcion || 'Empresa registrada en la plataforma SaaS.' }}</p>
+            </div>
+            
+            <div *ngIf="isEditingDescription" class="edit-description-form">
+              <textarea [(ngModel)]="tempDescription" rows="4" class="form-control" placeholder="Escribe una descripción sobre la empresa..."></textarea>
+              <div class="action-buttons mt-3" style="display: flex; gap: 8px; margin-top: 12px;">
+                <button class="btn-save" (click)="saveDescription()">Guardar</button>
+                <button class="btn-delete" (click)="deleteDescription()">Borrar</button>
+                <button class="btn-cancel" (click)="cancelEdit()">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Settings / Details -->
+    <div class="profile-right">
+      <div class="card settings-card">
+        <div class="card-header">
+          <h3>Información Adicional</h3>
+        </div>
+        <div class="card-body">
+          <p class="empty-state">No hay información adicional registrada para esta empresa en este momento.</p>
+          
+          <div class="info-grid mt-4">
+            <div class="info-item">
+              <span class="label">Suscripción</span>
+              <span class="value badge {{ empresa?.estado_suscripcion === 'activo' ? 'success' : 'warning' }}">
+                {{ empresa?.estado_suscripcion || 'Desconocido' }}
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="label">Tipo de Cuenta</span>
+              <span class="value">{{ empresa?.tipo || 'SaaS Registrado' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">NIT / RUC</span>
+              <span class="value">{{ empresa?.nit || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para ver imagen en grande -->
+  <div class="image-modal-overlay" *ngIf="showFullImage" (click)="closeFullImage()">
+    <button class="btn-close-modal" (click)="closeFullImage()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    
+    <div class="modal-image-container" (click)="$event.stopPropagation()">
+      <img [src]="logoUrl" *ngIf="logoUrl" class="full-size-img" alt="Logo">
+      <div class="full-size-initial" *ngIf="!logoUrl">
+        {{ (empresa?.nombre_empresa || 'E').charAt(0) }}
+      </div>
+    </div>
+  </div>
+</div>

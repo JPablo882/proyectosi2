@@ -1,0 +1,149 @@
+<div class="presupuesto-container">
+
+  <div class="card">
+
+    <h1>Presupuesto de Construcción</h1>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+
+        <label>Área en m²</label>
+
+        <input
+          type="number"
+          [(ngModel)]="presupuesto.area_m2"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Precio por m² (USD)</label>
+
+        <input
+          type="number"
+          [(ngModel)]="presupuesto.precio_m2_usd"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Tipo de Cambio</label>
+
+        <input
+          type="number"
+          [(ngModel)]="presupuesto.tipo_cambio"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>% Costos Indirectos</label>
+
+        <input
+          type="number"
+          [(ngModel)]="presupuesto.porcentaje_indirectos"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>% Utilidad</label>
+
+        <input
+          type="number"
+          [(ngModel)]="presupuesto.porcentaje_utilidad"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>% Impuestos</label>
+
+        <input
+          type="number"
+          [(ngModel)]="presupuesto.porcentaje_impuestos"
+        >
+
+      </div>
+
+    </div>
+
+    <button
+      class="btn-calcular"
+      (click)="calcularPresupuesto()"
+    >
+      Calcular Presupuesto
+    </button>
+
+  </div>
+
+  <!-- RESULTADOS -->
+
+  <div
+    class="resultado-card"
+    *ngIf="resultado"
+  >
+
+    <h2>Resultado del Presupuesto</h2>
+
+    <div class="resultado-grid">
+
+      <div class="resultado-item">
+
+        <span>Costo Base USD</span>
+
+        <h3>{{ resultado.costo_base_usd }}</h3>
+
+      </div>
+
+      <div class="resultado-item">
+
+        <span>Indirectos USD</span>
+
+        <h3>{{ resultado.costo_indirectos_usd }}</h3>
+
+      </div>
+
+      <div class="resultado-item">
+
+        <span>Utilidad USD</span>
+
+        <h3>{{ resultado.utilidad_usd }}</h3>
+
+      </div>
+
+      <div class="resultado-item">
+
+        <span>Impuestos USD</span>
+
+        <h3>{{ resultado.impuestos_usd }}</h3>
+
+      </div>
+
+      <div class="resultado-item total">
+
+        <span>TOTAL USD</span>
+
+        <h2>{{ resultado.total_usd }}</h2>
+
+      </div>
+
+      <div class="resultado-item total">
+
+        <span>TOTAL Bs</span>
+
+        <h2>{{ resultado.total_bob }}</h2>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
